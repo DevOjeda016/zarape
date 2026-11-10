@@ -124,7 +124,8 @@ describe.skipIf(!URL_PRUEBAS)('Módulo I · Gestión (e2e)', () => {
     it('modificación: todo excepto el ID', async () => {
       const r = await comoAdmin('patch', `/sucursales/${id}`).send({ horarios: 'Diario, 8:00 a 14:00' }).expect(200);
       expect(r.body.horarios).toBe('Diario, 8:00 a 14:00');
-      await comoAdmin('patch', `/sucursales/${id}`).send({ id: 999 }).expect(400);
+      const conId = await comoAdmin('patch', `/sucursales/${id}`).send({ id: 999 }).expect(400);
+      expect(conId.body.message).toEqual(['El ID no se puede modificar.']);
     });
 
     it('eliminar con un empleado asignado: pasa a BAJA', async () => {

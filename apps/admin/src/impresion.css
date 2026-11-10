@@ -1,0 +1,45 @@
+/*
+ * Impresión de resultados de búsqueda (RF02–RF06). Hoja carta horizontal, fondo blanco,
+ * sin menú ni botones (clases print:hidden en los componentes).
+ */
+@media print {
+  @page {
+    size: letter landscape;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Sin menú lateral (ni su hueco) y con el contenido a todo el ancho, en blanco */
+  [data-slot="sidebar"],
+  [data-slot="sidebar-gap"] {
+    display: none !important;
+  }
+
+  [data-slot="sidebar-wrapper"],
+  [data-slot="sidebar-inset"] {
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+
+  /* URLs largas: que se partan en vez de salirse de la hoja */
+  td a {
+    word-break: break-all;
+  }
+
+  /* Los avisos y diálogos abiertos no salen en papel */
+  [data-sonner-toaster],
+  [role="dialog"],
+  [role="alertdialog"] {
+    display: none !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+}

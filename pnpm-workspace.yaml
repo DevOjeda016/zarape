@@ -4,4 +4,6 @@ packages:
 allowBuilds:
   '@prisma/engines': true
   '@scarf/scarf': false
+  # esbuild (de tsx, para el seed): trae su binario como dependencia opcional; no necesita script
+  esbuild: false
   prisma: true
