@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "iconLibrary": "phosphor",
+  "aliases": {
+    "components": "@zarape/ui/components",
+    "utils": "@zarape/ui/lib/utils",
+    "hooks": "@zarape/ui/hooks",
+    "lib": "@zarape/ui/lib",
+    "ui": "@zarape/ui/components"
+  },
+  "rtl": false,
+  "menuColor": "default",
+  "menuAccent": "subtle"
+}

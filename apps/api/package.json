@@ -1,0 +1,50 @@
+{
+  "name": "@zarape/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API de El Zarape: NestJS + Prisma (PostgreSQL) + Socket.IO + Swagger.",
+  "type": "module",
+  "scripts": {
+    "postinstall": "prisma generate",
+    "dev": "prisma generate && nest start --watch",
+    "build": "prisma generate && nest build",
+    "start": "node dist/main",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:validate": "prisma validate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.4.0",
+    "@nestjs/config": "^12.1.1",
+    "@nestjs/core": "^12.4.0",
+    "@nestjs/platform-express": "^12.4.0",
+    "@nestjs/platform-socket.io": "^12.4.0",
+    "@nestjs/swagger": "^12.1.1",
+    "@nestjs/websockets": "^12.4.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "@zarape/shared": "workspace:*",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^12.0.12",
+    "@nestjs/schematics": "^12.0.13",
+    "@nestjs/testing": "^12.4.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "dotenv": "^18.0.9",
+    "prisma": "7.10.1",
+    "source-map-support": "^0.5.21",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
+  }
+}

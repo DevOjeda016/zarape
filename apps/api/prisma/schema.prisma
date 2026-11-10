@@ -1,0 +1,339 @@
+// El Zarape: modelo de datos (fuente de verdad; se documenta en docs/modelo-de-datos.md).
+//
+// Convenciones:
+// - Modelos y campos en camelCase para el código; tablas y columnas en snake_case (@map / @@map).
+// - Dinero en decimal(10,2), nunca float. Los precios del catálogo incluyen IVA.
+// - Borrado: físico solo si no hay registros relacionados; si los hay, estatus = BAJA.
+//   Por eso las relaciones hacia catálogos usan onDelete: Restrict.
+//
+// Reglas que Prisma no puede expresar aquí (CHECK) viven en la migración inicial:
+//   prisma/migrations/20261108000000_inicial/migration.sql
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+/// Estatus de catálogos, usuarios y clientes.
+enum Estatus {
+  ACTIVO
+  BAJA
+
+  @@map("estatus")
+}
+
+enum Rol {
+  ADMIN
+  COCINA
+
+  @@map("rol")
+}
+
+enum TipoCategoria {
+  ALIMENTO
+  BEBIDA
+
+  @@map("tipo_categoria")
+}
+
+enum Canal {
+  KIOSKO
+  DRIVE_THRU
+
+  @@map("canal")
+}
+
+enum EstatusComanda {
+  PENDIENTE
+  PAGADA
+  EN_COCINA
+  LISTA
+  ENTREGADA
+  CANCELADA
+
+  @@map("estatus_comanda")
+}
+
+enum TipoProducto {
+  ALIMENTO
+  BEBIDA
+  COMBO
+
+  @@map("tipo_producto")
+}
+
+enum EstatusPago {
+  APROBADO
+  RECHAZADO
+
+  @@map("estatus_pago")
+}
+
+// ─── Módulo I: catálogos (RF02–RF06) ──────────────────────────────────────────
+
+/// RF02
+model Sucursal {
+  id        Int     @id @default(autoincrement())
+  nombre    String
+  direccion String
+  latitud   Decimal @db.Decimal(9, 6)
+  longitud  Decimal @db.Decimal(9, 6)
+  fotoUrl   String  @map("foto_url")
+  url       String
+  horarios  String
+  estatus   Estatus @default(ACTIVO)
+
+  usuarios        Usuario[]
+  comandas        Comanda[]
+  gastosMarketing GastoMarketing[]
+
+  @@map("sucursal")
+}
+
+/// RF03: empleado. La contraseña aleatoria de 12 caracteres se guarda como hash (bcrypt).
+model Usuario {
+  id            Int     @id @default(autoincrement())
+  nombreUsuario String  @unique @map("nombre_usuario")
+  passwordHash  String  @map("password_hash")
+  rol           Rol
+  sucursalId    Int?    @map("sucursal_id")
+  estatus       Estatus @default(ACTIVO)
+
+  sucursal Sucursal? @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
+
+  @@map("usuario")
+}
+
+/// Categorías de alimentos (Platillos, Ensaladas…) y de bebidas (Refrescos, Aguas…).
+model Categoria {
+  id     Int           @id @default(autoincrement())
+  nombre String
+  tipo   TipoCategoria
+
+  alimentos Alimento[]
+  bebidas   Bebida[]
+
+  @@map("categoria")
+}
+
+/// RF04
+model Alimento {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  fotoUrl     String  @map("foto_url")
+  precio      Decimal @db.Decimal(10, 2)
+  categoriaId Int     @map("categoria_id")
+  estatus     Estatus @default(ACTIVO)
+
+  categoria Categoria        @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  combos    ComboAlimento[]
+  detalles  DetalleComanda[]
+
+  @@map("alimento")
+}
+
+/// RF05
+model Bebida {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  fotoUrl     String  @map("foto_url")
+  precio      Decimal @db.Decimal(10, 2)
+  categoriaId Int     @map("categoria_id")
+  estatus     Estatus @default(ACTIVO)
+
+  categoria Categoria        @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  combos    ComboBebida[]
+  detalles  DetalleComanda[]
+
+  @@map("bebida")
+}
+
+/// RF06
+model Combo {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  fotoUrl     String  @map("foto_url")
+  precio      Decimal @db.Decimal(10, 2)
+  estatus     Estatus @default(ACTIVO)
+
+  alimentos ComboAlimento[]
+  bebidas   ComboBebida[]
+  detalles  DetalleComanda[]
+
+  @@map("combo")
+}
+
+model ComboAlimento {
+  comboId    Int @map("combo_id")
+  alimentoId Int @map("alimento_id")
+  cantidad   Int @default(1)
+
+  combo    Combo    @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  alimento Alimento @relation(fields: [alimentoId], references: [id], onDelete: Restrict)
+
+  @@id([comboId, alimentoId])
+  @@map("combo_alimento")
+}
+
+model ComboBebida {
+  comboId  Int @map("combo_id")
+  bebidaId Int @map("bebida_id")
+  cantidad Int @default(1)
+
+  combo  Combo  @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  bebida Bebida @relation(fields: [bebidaId], references: [id], onDelete: Restrict)
+
+  @@id([comboId, bebidaId])
+  @@map("combo_bebida")
+}
+
+// ─── Módulo III: cliente del drive thru (RF17) ───────────────────────────────
+
+/// RF17. Nunca se borra: se da de baja con estatus = BAJA (RDF1702).
+model Cliente {
+  id           Int     @id @default(autoincrement())
+  usuario      String  @unique
+  passwordHash String  @map("password_hash")
+  nombre       String
+  apellidos    String
+  telefono     String
+  estatus      Estatus @default(ACTIVO)
+
+  medioPago MedioPago?
+  comandas  Comanda[]
+
+  @@map("cliente")
+}
+
+/// Medio de pago del cliente. Nunca se guarda el número completo ni el CVV.
+model MedioPago {
+  id           Int    @id @default(autoincrement())
+  clienteId    Int    @unique @map("cliente_id")
+  titular      String
+  marca        String
+  ultimos4     String @db.Char(4)
+  mesVenc      Int    @map("mes_venc")
+  anioVenc     Int    @map("anio_venc")
+  calleNumero  String @map("calle_numero")
+  colonia      String
+  ciudad       String
+  estado       String
+  codigoPostal String @map("codigo_postal") @db.Char(5)
+
+  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+
+  @@map("medio_pago")
+}
+
+// ─── Comandas y pagos (RF09–RF13, RF19, RF20) ────────────────────────────────
+
+/// RF10. El QR usa token_qr (UUID), nunca el id consecutivo.
+/// Turno: consecutivo diario por sucursal; fecha_turno es el día local en que se asignó (al pagar).
+model Comanda {
+  id          Int            @id @default(autoincrement())
+  tokenQr     String         @unique @default(dbgenerated("gen_random_uuid()")) @map("token_qr") @db.Uuid
+  turno       Int?
+  fechaTurno  DateTime?      @map("fecha_turno") @db.Date
+  canal       Canal
+  estatus     EstatusComanda @default(PENDIENTE)
+  sucursalId  Int            @map("sucursal_id")
+  clienteId   Int?           @map("cliente_id")
+  subtotal    Decimal        @db.Decimal(10, 2)
+  iva         Decimal        @db.Decimal(10, 2)
+  total       Decimal        @db.Decimal(10, 2)
+  creadaEn    DateTime       @default(now()) @map("creada_en") @db.Timestamptz(3)
+  pagadaEn    DateTime?      @map("pagada_en") @db.Timestamptz(3)
+  listaEn     DateTime?      @map("lista_en") @db.Timestamptz(3)
+  entregadaEn DateTime?      @map("entregada_en") @db.Timestamptz(3)
+
+  sucursal     Sucursal         @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
+  cliente      Cliente?         @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  detalles     DetalleComanda[]
+  pagos        Pago[]
+  calificacion Calificacion?
+
+  @@unique([sucursalId, fechaTurno, turno], map: "comanda_turno_diario_key")
+  @@map("comanda")
+}
+
+/// RF11. Copia nombre y precio del momento: si el catálogo cambia, el ticket no.
+/// Solo uno de alimento_id, bebida_id o combo_id tiene valor, según tipo (CHECK en la migración).
+model DetalleComanda {
+  id             Int          @id @default(autoincrement())
+  comandaId      Int          @map("comanda_id")
+  tipo           TipoProducto
+  alimentoId     Int?         @map("alimento_id")
+  bebidaId       Int?         @map("bebida_id")
+  comboId        Int?         @map("combo_id")
+  nombre         String
+  cantidad       Int
+  precioUnitario Decimal      @map("precio_unitario") @db.Decimal(10, 2)
+  totalLinea     Decimal      @map("total_linea") @db.Decimal(10, 2)
+
+  comanda  Comanda   @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  alimento Alimento? @relation(fields: [alimentoId], references: [id], onDelete: Restrict)
+  bebida   Bebida?   @relation(fields: [bebidaId], references: [id], onDelete: Restrict)
+  combo    Combo?    @relation(fields: [comboId], references: [id], onDelete: Restrict)
+
+  @@map("detalle_comanda")
+}
+
+/// RF13. Simulador: solo titular, marca, últimos 4 y vencimiento. Nunca número completo ni CVV.
+model Pago {
+  id         Int         @id @default(autoincrement())
+  comandaId  Int         @map("comanda_id")
+  titular    String
+  marca      String
+  ultimos4   String      @db.Char(4)
+  mesVenc    Int         @map("mes_venc")
+  anioVenc   Int         @map("anio_venc")
+  monto      Decimal     @db.Decimal(10, 2)
+  estatus    EstatusPago
+  referencia String
+  fecha      DateTime    @default(now()) @db.Timestamptz(3)
+
+  comanda Comanda @relation(fields: [comandaId], references: [id], onDelete: Restrict)
+
+  @@map("pago")
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+
+/// Inversión en mercadeo, para costo de adquisición y ROI.
+model GastoMarketing {
+  id          Int      @id @default(autoincrement())
+  campana     String
+  canal       String
+  monto       Decimal  @db.Decimal(10, 2)
+  fechaInicio DateTime @map("fecha_inicio") @db.Date
+  fechaFin    DateTime @map("fecha_fin") @db.Date
+  sucursalId  Int?     @map("sucursal_id")
+
+  sucursal Sucursal? @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
+
+  @@map("gasto_marketing")
+}
+
+/// Satisfacción del cliente con una comanda.
+model Calificacion {
+  id         Int      @id @default(autoincrement())
+  comandaId  Int      @unique @map("comanda_id")
+  estrellas  Int
+  comentario String?
+  creadaEn   DateTime @default(now()) @map("creada_en") @db.Timestamptz(3)
+
+  comanda Comanda @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+
+  @@map("calificacion")
+}

@@ -1,0 +1,25 @@
+{
+  "name": "zarape",
+  "version": "0.1.0",
+  "private": true,
+  "description": "El Zarape: autoservicio de brunch mexicano (PWA). Monorepo con pnpm workspaces.",
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @zarape/shared build && pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @zarape/api dev",
+    "dev:admin": "pnpm --filter @zarape/admin dev",
+    "dev:pos": "pnpm --filter @zarape/pos dev",
+    "dev:drive-thru": "pnpm --filter @zarape/drive-thru dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "oxlint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "oxlint": "^1.92.0"
+  }
+}
