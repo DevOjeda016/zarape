@@ -48,6 +48,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 | Fecha | Entrada | Resumen |
 |---|---|---|
 | 2026-11-10 | [002-script-logos-esm](2026-11-10-002-script-logos-esm.md) | El script de logos vuelve a correr como módulo ES (`import` en vez de `require`). |
+| 2026-11-10 | [001-herramientas-de-ia](2026-11-10-001-herramientas-de-ia.md) | Skills y MCP oficiales para Claude Code (shadcn, Prisma, Motion, Chrome DevTools), fijados por versión. |
 | 2026-11-08 | [011-nombres-de-apps](2026-11-08-011-nombres-de-apps.md) | Apps renombradas a inglés estándar: `gestion` → `admin`, `en-sitio` → `pos`. |
 | 2026-11-08 | [010-esqueleto-monorepo](2026-11-08-010-esqueleto-monorepo.md) | Monorepo con pnpm: API NestJS + Prisma + Socket.IO, tres apps React + Vite + PWA, tema shadcn de la marca y cálculo de la comanda con pruebas. |
 | 2026-11-08 | [009-iconos-phosphor](2026-11-08-009-iconos-phosphor.md) | Íconos de la UI con Phosphor (pesos regular, fill, duotone y bold); sin GSAP. |
