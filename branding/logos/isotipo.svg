@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="zr-l-iso" viewBox="0 0 120 120" role="img" aria-label="El Zarape">
+<style>
+.zr-l-iso .zr-fondo{fill:var(--logo-fondo,#FFF8EF)}
+.zr-l-iso .zr-jarro{fill:var(--logo-jarro,#B4532A)}
+.zr-l-iso .zr-asa{fill:none;stroke:var(--logo-jarro,#B4532A);stroke-width:7;stroke-linecap:round}
+.zr-l-iso .zr-boca{fill:var(--logo-boca,#5E2A14)}
+.zr-l-iso .zr-vapor{fill:none;stroke:var(--logo-vapor,#B3261E);stroke-width:3;stroke-linecap:round}
+.zr-l-iso .zr-crema{fill:#FFF8EF}.zr-l-iso .zr-rosa{fill:#C2185B}.zr-l-iso .zr-cemp{fill:#F4A019}.zr-l-iso .zr-tala{fill:#1F5FA8}
+.zr-l-iso .zr-fleco{stroke:#FFF8EF;stroke-width:1.6;stroke-linecap:round}
+</style><defs><clipPath id="zr-c-iso"><path d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z"/></clipPath></defs>
+<rect class="zr-fondo" width="120" height="120" rx="28"/>
+<g transform="translate(-3 4)">
+<g class="zr-vapor"><path d="M48 26c-4-4 4-7 0-12"/><path d="M58 24c-4-4 4-7 0-12"/><path d="M68 26c-4-4 4-7 0-12"/></g>
+<path class="zr-asa" d="M75 51C99 44 103 72 82 78"/>
+<path class="zr-jarro" d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z"/>
+<g clip-path="url(#zr-c-iso)"><path class="zr-crema" d="M16 60Q58 66 100 60V62Q58 68 16 62Z"/><path class="zr-rosa" d="M16 62Q58 68 100 62V67Q58 73 16 67Z"/><path class="zr-cemp" d="M16 67Q58 73 100 67V71Q58 77 16 71Z"/><path class="zr-tala" d="M16 71Q58 77 100 71V76Q58 82 16 76Z"/><path class="zr-crema" d="M16 76Q58 82 100 76V78Q58 84 16 78Z"/><g class="zr-fleco"><line x1="34" y1="80.8" x2="34" y2="85.5"/><line x1="38" y1="81.1" x2="38" y2="85.8"/><line x1="42" y1="81.4" x2="42" y2="86.1"/><line x1="46" y1="81.6" x2="46" y2="86.3"/><line x1="50" y1="81.7" x2="50" y2="86.4"/><line x1="54" y1="81.8" x2="54" y2="86.5"/><line x1="58" y1="81.8" x2="58" y2="86.5"/><line x1="62" y1="81.8" x2="62" y2="86.5"/><line x1="66" y1="81.7" x2="66" y2="86.4"/><line x1="70" y1="81.6" x2="70" y2="86.3"/><line x1="74" y1="81.4" x2="74" y2="86.1"/><line x1="78" y1="81.1" x2="78" y2="85.8"/><line x1="82" y1="80.8" x2="82" y2="85.5"/></g></g>
+<ellipse class="zr-jarro" cx="58" cy="36" rx="25" ry="5"/>
+<ellipse class="zr-boca" cx="58" cy="36" rx="20.5" ry="3.2"/>
+</g>
+</svg>

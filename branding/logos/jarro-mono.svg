@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="El Zarape">
+<defs><mask id="zr-m-mono" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+<rect width="120" height="120" fill="#fff"/>
+<path d="M16 60Q58 66 100 60V62Q58 68 16 62Z" fill="#000"/><path d="M16 66.5Q58 72.5 100 66.5V68Q58 74 16 68Z" fill="#000"/><path d="M16 71Q58 77 100 71V72.5Q58 78.5 16 72.5Z" fill="#000"/><path d="M16 76Q58 82 100 76V78Q58 84 16 78Z" fill="#000"/>
+<g stroke="#000" stroke-width="1.6" stroke-linecap="round"><line x1="34" y1="80.8" x2="34" y2="85.5"/><line x1="38" y1="81.1" x2="38" y2="85.8"/><line x1="42" y1="81.4" x2="42" y2="86.1"/><line x1="46" y1="81.6" x2="46" y2="86.3"/><line x1="50" y1="81.7" x2="50" y2="86.4"/><line x1="54" y1="81.8" x2="54" y2="86.5"/><line x1="58" y1="81.8" x2="58" y2="86.5"/><line x1="62" y1="81.8" x2="62" y2="86.5"/><line x1="66" y1="81.7" x2="66" y2="86.4"/><line x1="70" y1="81.6" x2="70" y2="86.3"/><line x1="74" y1="81.4" x2="74" y2="86.1"/><line x1="78" y1="81.1" x2="78" y2="85.8"/><line x1="82" y1="80.8" x2="82" y2="85.5"/></g>
+<ellipse cx="58" cy="36" rx="20.5" ry="3.2" fill="#000"/>
+</mask><mask id="zr-m-asa" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+<rect width="120" height="120" fill="#fff"/>
+<path d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z" fill="#000"/>
+</mask></defs>
+<g transform="translate(-3 4)" fill="currentColor" stroke="currentColor">
+<g fill="none" stroke-width="3" stroke-linecap="round"><path d="M48 26c-4-4 4-7 0-12"/><path d="M58 24c-4-4 4-7 0-12"/><path d="M68 26c-4-4 4-7 0-12"/></g>
+<path d="M75 51C99 44 103 72 82 78" fill="none" stroke-width="7" stroke-linecap="round" mask="url(#zr-m-asa)"/>
+<g mask="url(#zr-m-mono)" stroke="none"><path d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z"/><ellipse cx="58" cy="36" rx="25" ry="5"/></g>
+</g>
+</svg>
