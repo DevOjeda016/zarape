@@ -2,65 +2,65 @@ import { type ExecutionContext, ForbiddenException, UnauthorizedException } from
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { describe, expect, it } from 'vitest';
-import { CLAVE_PUBLICO, CLAVE_ROLES } from './decoradores.js';
+import { IS_PUBLIC_KEY, ROLES_KEY } from './decorators.js';
 import { JwtGuard } from './jwt.guard.js';
 import { RolesGuard } from './roles.guard.js';
-import type { SesionEmpleado } from './sesion.js';
+import type { EmployeeSession } from './session.js';
 
-const jwt = new JwtService({ secret: 'secreto-de-prueba' });
+const jwt = new JwtService({ secret: 'test-secret' });
 
-function contexto(peticion: object, metadatos: Record<string, unknown> = {}): [ExecutionContext, Reflector] {
+function context(request: object, metadata: Record<string, unknown> = {}): [ExecutionContext, Reflector] {
   const handler = () => undefined;
-  for (const [clave, valor] of Object.entries(metadatos)) Reflect.defineMetadata(clave, valor, handler);
+  for (const [key, value] of Object.entries(metadata)) Reflect.defineMetadata(key, value, handler);
   const ctx = {
     getHandler: () => handler,
     getClass: () => class {},
-    switchToHttp: () => ({ getRequest: () => peticion }),
+    switchToHttp: () => ({ getRequest: () => request }),
   } as unknown as ExecutionContext;
   return [ctx, new Reflector()];
 }
 
-const sesion = (rol: SesionEmpleado['rol']): SesionEmpleado => ({ sub: 1, nombreUsuario: 'ana', rol, tipo: 'EMPLEADO' });
+const session = (role: EmployeeSession['role']): EmployeeSession => ({ sub: 1, username: 'ana', role, kind: 'EMPLOYEE' });
 
 describe('JwtGuard', () => {
-  it('deja pasar rutas @Publico() sin token', async () => {
-    const [ctx, reflector] = contexto({ headers: {} }, { [CLAVE_PUBLICO]: true });
+  it('deja pasar rutas @Public() sin token', async () => {
+    const [ctx, reflector] = context({ headers: {} }, { [IS_PUBLIC_KEY]: true });
     await expect(new JwtGuard(reflector, jwt).canActivate(ctx)).resolves.toBe(true);
   });
 
   it('pide token en las demás', async () => {
-    const [ctx, reflector] = contexto({ headers: {} });
+    const [ctx, reflector] = context({ headers: {} });
     await expect(new JwtGuard(reflector, jwt).canActivate(ctx)).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
   it('rechaza un token falso', async () => {
-    const [ctx, reflector] = contexto({ headers: { authorization: 'Bearer no.es.jwt' } });
+    const [ctx, reflector] = context({ headers: { authorization: 'Bearer not.a.jwt' } });
     await expect(new JwtGuard(reflector, jwt).canActivate(ctx)).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
   it('con token válido pone la sesión en la petición', async () => {
-    const peticion: { headers: object; sesion?: SesionEmpleado } = {
-      headers: { authorization: `Bearer ${await jwt.signAsync(sesion('ADMIN'))}` },
+    const request: { headers: object; session?: EmployeeSession } = {
+      headers: { authorization: `Bearer ${await jwt.signAsync(session('ADMIN'))}` },
     };
-    const [ctx, reflector] = contexto(peticion);
+    const [ctx, reflector] = context(request);
     await expect(new JwtGuard(reflector, jwt).canActivate(ctx)).resolves.toBe(true);
-    expect(peticion.sesion?.rol).toBe('ADMIN');
+    expect(request.session?.role).toBe('ADMIN');
   });
 });
 
 describe('RolesGuard', () => {
   it('sin @Roles() deja pasar', () => {
-    const [ctx, reflector] = contexto({ sesion: sesion('COCINA') });
+    const [ctx, reflector] = context({ session: session('KITCHEN') });
     expect(new RolesGuard(reflector).canActivate(ctx)).toBe(true);
   });
 
   it('ADMIN entra a rutas de ADMIN', () => {
-    const [ctx, reflector] = contexto({ sesion: sesion('ADMIN') }, { [CLAVE_ROLES]: ['ADMIN'] });
+    const [ctx, reflector] = context({ session: session('ADMIN') }, { [ROLES_KEY]: ['ADMIN'] });
     expect(new RolesGuard(reflector).canActivate(ctx)).toBe(true);
   });
 
-  it('COCINA no entra a los catálogos', () => {
-    const [ctx, reflector] = contexto({ sesion: sesion('COCINA') }, { [CLAVE_ROLES]: ['ADMIN'] });
+  it('KITCHEN no entra a los catálogos', () => {
+    const [ctx, reflector] = context({ session: session('KITCHEN') }, { [ROLES_KEY]: ['ADMIN'] });
     expect(() => new RolesGuard(reflector).canActivate(ctx)).toThrow(ForbiddenException);
   });
 });

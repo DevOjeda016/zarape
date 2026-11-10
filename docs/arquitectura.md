@@ -38,45 +38,49 @@ zarape/
 
 `packages/shared` es la única fuente del cálculo del ticket: el front lo usa para mostrar totales al instante y la API lo usa para **recalcular** con los precios de la BD (nunca se confía en los totales que manda el cliente).
 
+## Convención de nombres
+
+Código, rutas REST, base de datos y git en inglés (glosario en `docs/modelo-de-datos.md`); textos de la UI y documentación en español.
+
 ## Módulos de la API (NestJS)
 
 | Módulo | Qué hace | RF |
 |---|---|---|
 | `auth` | Login de empleado y de cliente, JWT, guards de rol | RF01, RF16 |
-| `sucursales` | CRUD, búsqueda, cercanía por GPS | RF02, RF19 |
-| `usuarios` | Empleados; genera contraseña aleatoria de 12 caracteres | RF03 |
-| `categorias` | Categorías de alimentos y bebidas | RF04, RF05 |
-| `alimentos`, `bebidas` | CRUD y búsqueda | RF04, RF05 |
+| `branches` | Sucursales: CRUD, búsqueda, cercanía por GPS | RF02, RF19 |
+| `employees` | Empleados; genera contraseña aleatoria de 12 caracteres | RF03 |
+| `categories` | Categorías de alimentos y bebidas | RF04, RF05 |
+| `foods`, `drinks` | Alimentos y bebidas: CRUD y búsqueda | RF04, RF05 |
 | `combos` | CRUD con componentes de alimentos y bebidas | RF06 |
-| `clientes` | Registro y perfil del drive thru, baja por estatus | RF17 |
-| `comandas` | Crear al pagar, cambio de estatus, búsqueda, detalle, QR | RF09–RF11, RF15, RF19, RF20 |
-| `pagos` | Simulador de pago en línea y búsqueda de pagos | RF12, RF13 |
-| `tiempo-real` | Gateway Socket.IO | RF14, RF15 |
+| `customers` | Clientes: registro y perfil del drive thru, baja por estatus | RF17 |
+| `orders` | Comandas: crear al pagar, cambio de estatus, búsqueda, detalle, QR | RF09–RF11, RF15, RF19, RF20 |
+| `payments` | Pagos: simulador de pago en línea y búsqueda de pagos | RF12, RF13 |
+| `realtime` | Gateway Socket.IO | RF14, RF15 |
 | `dashboard` | Indicadores de ventas, canales, productos, operación y mercadeo | Lineamientos del profesor |
-| `archivos` | Subida de fotos | RF02, RF04, RF05 |
+| `files` | Subida de fotos (`POST /api/files/photos`, se sirven en `/photos`) | RF02, RF04, RF05, RF06 |
 
 ### Regla de eliminar (todos los catálogos)
 
-El servicio cuenta los registros relacionados. Si hay **cero**, borra el registro. Si hay **alguno**, cambia `estatus` a `BAJA`. La respuesta le dice al front cuál de las dos pasó, para mostrar el mensaje correcto. El perfil del cliente es la excepción: **siempre** pasa a `BAJA` (RDF1702).
+El servicio cuenta los registros relacionados. Si hay **cero**, borra el registro. Si hay **alguno**, cambia `status` a `INACTIVE` (baja). La respuesta (`action`: `DELETED` o `DEACTIVATED`) le dice al front cuál de las dos pasó, para mostrar el mensaje correcto. El perfil del cliente es la excepción: **siempre** pasa a `INACTIVE` (RDF1702).
 
 ## Roles
 
 | Rol | Tipo | Puede |
 |---|---|---|
 | `ADMIN` | Empleado | Todo el Módulo I y el dashboard. |
-| `COCINA` | Empleado | Ver comandas y su detalle, cambiar estatus, leer QR en ventanilla. |
+| `KITCHEN` | Empleado (cocina) | Ver comandas y su detalle, cambiar estatus, leer QR en ventanilla. |
 | Comensal | Sin cuenta | Kiosko: menú, comanda y pago. |
-| `CLIENTE` | Cliente | Drive thru: perfil, ordenar, revisar pedido. |
+| Cliente (`customer`) | Cliente | Drive thru: perfil, ordenar, revisar pedido. |
 
 ## Flujo de una comanda
 
-Estados: `PENDIENTE` → `PAGADA` → `EN_COCINA` → `LISTA` → `ENTREGADA`. Puede pasar a `CANCELADA` desde `PENDIENTE` o `PAGADA`.
+Estados (`OrderStatus`): `PENDING` → `PAID` → `IN_KITCHEN` → `READY` → `DELIVERED`. Puede pasar a `CANCELLED` desde `PENDING` o `PAID`.
 
 1. El comensal arma el pedido; el ticket se calcula en el navegador con `packages/shared`.
-2. Al pagar, la API recalcula con precios de la BD, crea la comanda `PENDIENTE` y corre el simulador.
-3. Pago aprobado: la comanda pasa a `PAGADA` y recibe su número de turno (consecutivo diario por sucursal) y su token de QR. Se avisa a cocina por Socket.IO. Pago rechazado: queda `PENDIENTE` y se puede reintentar.
-4. Cocina la toma (`EN_COCINA`) y al terminar la marca `LISTA`. Se avisa a la pantalla de turnos y a quien siga ese QR.
-5. Kiosko: el comensal recoge con su turno. Drive thru: el personal lee el QR en ventanilla. En ambos casos queda `ENTREGADA`.
+2. Al pagar, la API recalcula con precios de la BD, crea la comanda `PENDING` y corre el simulador.
+3. Pago aprobado: la comanda pasa a `PAID` y recibe su número de turno (`ticketNumber`, consecutivo diario por sucursal) y su token de QR. Se avisa a cocina por Socket.IO. Pago rechazado: queda `PENDING` y se puede reintentar.
+4. Cocina la toma (`IN_KITCHEN`) y al terminar la marca `READY`. Se avisa a la pantalla de turnos y a quien siga ese QR.
+5. Kiosko: el comensal recoge con su turno. Drive thru: el personal lee el QR en ventanilla. En ambos casos queda `DELIVERED`.
 
 ```mermaid
 sequenceDiagram
@@ -85,24 +89,24 @@ sequenceDiagram
     participant DB as PostgreSQL
     participant C as Cocina
     participant T as Turnos
-    K->>A: POST /comandas (productos + tarjeta de prueba)
-    A->>DB: recalcula precios, crea comanda PENDIENTE
+    K->>A: POST /orders (productos + tarjeta de prueba)
+    A->>DB: recalcula precios, crea comanda PENDING
     A->>A: simulador de pago
-    A->>DB: pago APROBADO, comanda PAGADA, turno 042
+    A->>DB: pago APPROVED, comanda PAID, turno 042
     A-->>K: ticket + turno + QR
-    A--)C: comanda:nueva (sala sucursal:cocina)
-    A--)T: turno:preparando 042
-    C->>A: PATCH /comandas/:id/estatus LISTA
+    A--)C: order:new (sala branch:kitchen)
+    A--)T: ticket:preparing 042
+    C->>A: PATCH /orders/:id/status READY
     A->>DB: guarda hora de lista
-    A--)T: turno:listo 042 (sonido + aviso)
-    A--)K: comanda:estatus LISTA (sala comanda:token)
+    A--)T: ticket:ready 042 (sonido + aviso)
+    A--)K: order:status READY (sala order:qrToken)
     K->>A: lectura de QR en ventanilla, ENTREGADA
 ```
 
 ### Tiempo real
 
-- Salas: `sucursal:{id}:cocina`, `sucursal:{id}:turnos`, `comanda:{token}`.
-- La sala de cocina exige el JWT de un empleado en el handshake. Turnos y `comanda:{token}` son solo de lectura.
+- Salas: `branch:{id}:kitchen`, `branch:{id}:tickets`, `order:{qrToken}`.
+- La sala de cocina exige el JWT de un empleado en el handshake. Turnos y `order:{qrToken}` son solo de lectura.
 - El socket solo **avisa**: la fuente de verdad es REST. Al reconectar, cada pantalla vuelve a pedir su lista por REST.
 
 ## Pagos y datos de tarjeta

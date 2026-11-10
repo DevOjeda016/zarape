@@ -13,12 +13,12 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { ConsultaConEstatus, Recortar } from '../comun/consulta.js';
-import { CampoFoto } from '../comun/foto.js';
-import { CampoPrecio } from '../comun/producto.dto.js';
-import { Estatus } from '../generated/prisma/enums.js';
+import { PhotoField } from '../common/photo.js';
+import { PriceField } from '../common/product.dto.js';
+import { StatusQuery, Trim } from '../common/query.js';
+import { Status } from '../generated/prisma/enums.js';
 
-export class ComponenteDto {
+export class ComboItemDto {
   @ApiProperty({ description: 'ID del alimento o de la bebida.' })
   @Type(() => Number)
   @IsInt()
@@ -30,92 +30,92 @@ export class ComponenteDto {
   @IsInt({ message: 'La cantidad es un número entero.' })
   @IsPositive({ message: 'La cantidad debe ser 1 o más.' })
   @Max(20)
-  cantidad: number;
+  quantity: number;
 }
 
 /** RF06: nombre, precio, descripción y varios alimentos y/o bebidas de sus catálogos. */
-export class CrearComboDto {
+export class CreateComboDto {
   @ApiProperty({ example: 'Combo Zarape' })
-  @Recortar()
+  @Trim()
   @IsString()
   @IsNotEmpty({ message: 'Escribe el nombre.' })
   @MaxLength(100)
-  nombre: string;
+  name: string;
 
   @ApiProperty({ example: 'Chilaquiles con pollo, jugo de naranja y café americano.' })
-  @Recortar()
+  @Trim()
   @IsString()
   @IsNotEmpty({ message: 'Escribe la descripción.' })
   @MaxLength(500)
-  descripcion: string;
+  description: string;
 
-  @CampoFoto('/fotos/muestra/combo.svg')
-  fotoUrl: string;
+  @PhotoField('/photos/samples/combo.svg')
+  photoUrl: string;
 
-  @CampoPrecio()
-  precio: number;
+  @PriceField()
+  price: number;
 
-  @ApiProperty({ type: [ComponenteDto] })
+  @ApiProperty({ type: [ComboItemDto] })
   @IsArray()
   @ArrayMaxSize(20)
   @ValidateNested({ each: true })
-  @Type(() => ComponenteDto)
-  alimentos: ComponenteDto[];
+  @Type(() => ComboItemDto)
+  foods: ComboItemDto[];
 
-  @ApiProperty({ type: [ComponenteDto] })
+  @ApiProperty({ type: [ComboItemDto] })
   @IsArray()
   @ArrayMaxSize(20)
   @ValidateNested({ each: true })
-  @Type(() => ComponenteDto)
-  bebidas: ComponenteDto[];
+  @Type(() => ComboItemDto)
+  drinks: ComboItemDto[];
 }
 
-/** RDF0603: todo excepto el ID. Si llegan `alimentos` o `bebidas`, reemplazan la lista completa. */
-export class ActualizarComboDto extends PartialType(CrearComboDto) {
-  @ApiPropertyOptional({ enum: Estatus })
+/** RDF0603: todo excepto el ID. Si llegan `foods` o `drinks`, reemplazan la lista completa. */
+export class UpdateComboDto extends PartialType(CreateComboDto) {
+  @ApiPropertyOptional({ enum: Status })
   @IsOptional()
-  @IsEnum(Estatus)
-  estatus?: Estatus;
+  @IsEnum(Status)
+  status?: Status;
 }
 
 /** RDF0604: por nombre, alimentos o bebidas. */
-export class ConsultaCombosDto extends ConsultaConEstatus {
+export class ComboQueryDto extends StatusQuery {
   @ApiPropertyOptional({ description: 'Parte del nombre del combo.' })
   @IsOptional()
-  @Recortar()
+  @Trim()
   @IsString()
-  nombre?: string;
+  name?: string;
 
   @ApiPropertyOptional({ description: 'Parte del nombre de un alimento que incluya.' })
   @IsOptional()
-  @Recortar()
+  @Trim()
   @IsString()
-  alimento?: string;
+  food?: string;
 
   @ApiPropertyOptional({ description: 'Parte del nombre de una bebida que incluya.' })
   @IsOptional()
-  @Recortar()
+  @Trim()
   @IsString()
-  bebida?: string;
+  drink?: string;
 }
 
-export class ComponenteDetalleDto {
+export class ComboItemDetailDto {
   @ApiProperty() id: number;
-  @ApiProperty() nombre: string;
-  @ApiProperty() precio: number;
-  @ApiProperty() cantidad: number;
-  @ApiProperty({ enum: Estatus }) estatus: Estatus;
+  @ApiProperty() name: string;
+  @ApiProperty() price: number;
+  @ApiProperty() quantity: number;
+  @ApiProperty({ enum: Status }) status: Status;
 }
 
 export class ComboDto {
   @ApiProperty() id: number;
-  @ApiProperty() nombre: string;
-  @ApiProperty() descripcion: string;
-  @ApiProperty() fotoUrl: string;
-  @ApiProperty() precio: number;
-  @ApiProperty({ enum: Estatus }) estatus: Estatus;
-  @ApiProperty({ type: [ComponenteDetalleDto] }) alimentos: ComponenteDetalleDto[];
-  @ApiProperty({ type: [ComponenteDetalleDto] }) bebidas: ComponenteDetalleDto[];
-  @ApiProperty({ description: 'Suma de los componentes a su precio actual.' }) precioPorSeparado: number;
-  @ApiProperty({ description: 'precioPorSeparado − precio.' }) ahorro: number;
+  @ApiProperty() name: string;
+  @ApiProperty() description: string;
+  @ApiProperty() photoUrl: string;
+  @ApiProperty() price: number;
+  @ApiProperty({ enum: Status }) status: Status;
+  @ApiProperty({ type: [ComboItemDetailDto] }) foods: ComboItemDetailDto[];
+  @ApiProperty({ type: [ComboItemDetailDto] }) drinks: ComboItemDetailDto[];
+  @ApiProperty({ description: 'Suma de los componentes a su precio actual.' }) separatePrice: number;
+  @ApiProperty({ description: 'separatePrice − price.' }) savings: number;
 }

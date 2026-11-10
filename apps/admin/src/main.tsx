@@ -6,21 +6,21 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 
 import '@zarape/ui/globals.css';
-import './impresion.css';
+import './print.css';
 import { App } from './App.tsx';
-import { ProveedorSesion } from './auth/sesion.tsx';
+import { SessionProvider } from './auth/session.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* Si el sistema pide menos movimiento, Motion quita desplazamientos y deja fundidos */}
     <MotionConfig reducedMotion="user">
       <BrowserRouter>
-        <ProveedorSesion>
+        <SessionProvider>
           <TooltipProvider delayDuration={300}>
             <App />
             <Toaster position="top-center" richColors={false} closeButton />
           </TooltipProvider>
-        </ProveedorSesion>
+        </SessionProvider>
       </BrowserRouter>
     </MotionConfig>
   </StrictMode>,

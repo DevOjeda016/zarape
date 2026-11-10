@@ -1,48 +1,48 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { aNumero } from '../comun/decimales.js';
-import { contiene } from '../comun/consulta.js';
-import { eliminarOBaja, type ResultadoEliminacion } from '../comun/eliminacion.js';
+import { toNumber } from '../common/decimals.js';
+import { deleteOrDeactivate, type DeletionResult } from '../common/deletion.js';
+import { containsText } from '../common/query.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type {
-  ActualizarComboDto,
   ComboDto,
-  ComponenteDetalleDto,
-  ComponenteDto,
-  ConsultaCombosDto,
-  CrearComboDto,
+  ComboItemDetailDto,
+  ComboItemDto,
+  ComboQueryDto,
+  CreateComboDto,
+  UpdateComboDto,
 } from './dto.js';
 
-const PRODUCTO = { select: { id: true, nombre: true, precio: true, estatus: true } } as const;
-const CAMPOS = {
+const PRODUCT = { select: { id: true, name: true, price: true, status: true } } as const;
+const COMBO_SELECT = {
   id: true,
-  nombre: true,
-  descripcion: true,
-  fotoUrl: true,
-  precio: true,
-  estatus: true,
-  alimentos: { select: { cantidad: true, alimento: PRODUCTO }, orderBy: { alimento: { nombre: 'asc' } } },
-  bebidas: { select: { cantidad: true, bebida: PRODUCTO }, orderBy: { bebida: { nombre: 'asc' } } },
+  name: true,
+  description: true,
+  photoUrl: true,
+  price: true,
+  status: true,
+  foods: { select: { quantity: true, food: PRODUCT }, orderBy: { food: { name: 'asc' } } },
+  drinks: { select: { quantity: true, drink: PRODUCT }, orderBy: { drink: { name: 'asc' } } },
 } as const;
 
-type Producto = { id: number; nombre: string; precio: { toString(): string }; estatus: ComboDto['estatus'] };
-type Fila = Omit<ComboDto, 'precio' | 'alimentos' | 'bebidas' | 'precioPorSeparado' | 'ahorro'> & {
-  precio: { toString(): string };
-  alimentos: { cantidad: number; alimento: Producto }[];
-  bebidas: { cantidad: number; bebida: Producto }[];
+type Product = { id: number; name: string; price: { toString(): string }; status: ComboDto['status'] };
+type Row = Omit<ComboDto, 'price' | 'foods' | 'drinks' | 'separatePrice' | 'savings'> & {
+  price: { toString(): string };
+  foods: { quantity: number; food: Product }[];
+  drinks: { quantity: number; drink: Product }[];
 };
 
-const centavos = (valor: number) => Math.round(valor * 100) / 100;
+const roundCents = (value: number) => Math.round(value * 100) / 100;
 
-function componente(producto: Producto, cantidad: number): ComponenteDetalleDto {
-  return { ...producto, precio: aNumero(producto.precio), cantidad };
+function toItem(product: Product, quantity: number): ComboItemDetailDto {
+  return { ...product, price: toNumber(product.price), quantity };
 }
 
-function aDto(fila: Fila): ComboDto {
-  const alimentos = fila.alimentos.map((c) => componente(c.alimento, c.cantidad));
-  const bebidas = fila.bebidas.map((c) => componente(c.bebida, c.cantidad));
-  const precio = aNumero(fila.precio);
-  const precioPorSeparado = centavos([...alimentos, ...bebidas].reduce((suma, c) => suma + c.precio * c.cantidad, 0));
-  return { ...fila, precio, alimentos, bebidas, precioPorSeparado, ahorro: centavos(precioPorSeparado - precio) };
+function toDto(row: Row): ComboDto {
+  const foods = row.foods.map((c) => toItem(c.food, c.quantity));
+  const drinks = row.drinks.map((c) => toItem(c.drink, c.quantity));
+  const price = toNumber(row.price);
+  const separatePrice = roundCents([...foods, ...drinks].reduce((sum, c) => sum + c.price * c.quantity, 0));
+  return { ...row, price, foods, drinks, separatePrice, savings: roundCents(separatePrice - price) };
 }
 
 /** RF06: combos de alimentos y bebidas tomados de sus catálogos. */
@@ -50,53 +50,53 @@ function aDto(fila: Fila): ComboDto {
 export class CombosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async buscar(consulta: ConsultaCombosDto): Promise<ComboDto[]> {
-    const filas = await this.prisma.combo.findMany({
+  async search(query: ComboQueryDto): Promise<ComboDto[]> {
+    const rows = await this.prisma.combo.findMany({
       where: {
-        nombre: contiene(consulta.nombre),
-        estatus: consulta.estatus,
-        alimentos: consulta.alimento ? { some: { alimento: { nombre: contiene(consulta.alimento) } } } : undefined,
-        bebidas: consulta.bebida ? { some: { bebida: { nombre: contiene(consulta.bebida) } } } : undefined,
+        name: containsText(query.name),
+        status: query.status,
+        foods: query.food ? { some: { food: { name: containsText(query.food) } } } : undefined,
+        drinks: query.drink ? { some: { drink: { name: containsText(query.drink) } } } : undefined,
       },
-      select: CAMPOS,
-      orderBy: { nombre: 'asc' },
+      select: COMBO_SELECT,
+      orderBy: { name: 'asc' },
     });
-    return filas.map(aDto);
+    return rows.map(toDto);
   }
 
-  async obtener(id: number): Promise<ComboDto> {
-    const fila = await this.prisma.combo.findUnique({ where: { id }, select: CAMPOS });
-    if (!fila) throw new NotFoundException('No encontramos ese combo.');
-    return aDto(fila);
+  async findOne(id: number): Promise<ComboDto> {
+    const row = await this.prisma.combo.findUnique({ where: { id }, select: COMBO_SELECT });
+    if (!row) throw new NotFoundException('No encontramos ese combo.');
+    return toDto(row);
   }
 
-  async crear(dto: CrearComboDto): Promise<ComboDto> {
-    const alimentos = this.unir(dto.alimentos);
-    const bebidas = this.unir(dto.bebidas);
-    await this.revisarComponentes(alimentos, bebidas);
+  async create(dto: CreateComboDto): Promise<ComboDto> {
+    const foods = this.merge(dto.foods);
+    const drinks = this.merge(dto.drinks);
+    await this.ensureItems(foods, drinks);
     const { id } = await this.prisma.combo.create({
       data: {
-        nombre: dto.nombre,
-        descripcion: dto.descripcion,
-        fotoUrl: dto.fotoUrl,
-        precio: dto.precio,
-        alimentos: { create: alimentos.map((c) => ({ alimentoId: c.id, cantidad: c.cantidad })) },
-        bebidas: { create: bebidas.map((c) => ({ bebidaId: c.id, cantidad: c.cantidad })) },
+        name: dto.name,
+        description: dto.description,
+        photoUrl: dto.photoUrl,
+        price: dto.price,
+        foods: { create: foods.map((c) => ({ foodId: c.id, quantity: c.quantity })) },
+        drinks: { create: drinks.map((c) => ({ drinkId: c.id, quantity: c.quantity })) },
       },
       select: { id: true },
     });
-    return this.obtener(id);
+    return this.findOne(id);
   }
 
-  async actualizar(id: number, dto: ActualizarComboDto): Promise<ComboDto> {
-    const actual = await this.obtener(id);
-    const alimentos = dto.alimentos ? this.unir(dto.alimentos) : undefined;
-    const bebidas = dto.bebidas ? this.unir(dto.bebidas) : undefined;
-    if (alimentos || bebidas) {
-      await this.revisarComponentes(
-        alimentos ?? actual.alimentos,
-        bebidas ?? actual.bebidas,
-        new Set([...actual.alimentos.map((c) => `A${c.id}`), ...actual.bebidas.map((c) => `B${c.id}`)]),
+  async update(id: number, dto: UpdateComboDto): Promise<ComboDto> {
+    const current = await this.findOne(id);
+    const foods = dto.foods ? this.merge(dto.foods) : undefined;
+    const drinks = dto.drinks ? this.merge(dto.drinks) : undefined;
+    if (foods || drinks) {
+      await this.ensureItems(
+        foods ?? current.foods,
+        drinks ?? current.drinks,
+        new Set([...current.foods.map((c) => `F${c.id}`), ...current.drinks.map((c) => `D${c.id}`)]),
       );
     }
 
@@ -104,73 +104,71 @@ export class CombosService {
       await tx.combo.update({
         where: { id },
         data: {
-          nombre: dto.nombre,
-          descripcion: dto.descripcion,
-          fotoUrl: dto.fotoUrl,
-          precio: dto.precio,
-          estatus: dto.estatus,
+          name: dto.name,
+          description: dto.description,
+          photoUrl: dto.photoUrl,
+          price: dto.price,
+          status: dto.status,
         },
       });
-      if (alimentos) {
-        await tx.comboAlimento.deleteMany({ where: { comboId: id } });
-        await tx.comboAlimento.createMany({
-          data: alimentos.map((c) => ({ comboId: id, alimentoId: c.id, cantidad: c.cantidad })),
-        });
+      if (foods) {
+        await tx.comboFood.deleteMany({ where: { comboId: id } });
+        await tx.comboFood.createMany({ data: foods.map((c) => ({ comboId: id, foodId: c.id, quantity: c.quantity })) });
       }
-      if (bebidas) {
-        await tx.comboBebida.deleteMany({ where: { comboId: id } });
-        await tx.comboBebida.createMany({
-          data: bebidas.map((c) => ({ comboId: id, bebidaId: c.id, cantidad: c.cantidad })),
+      if (drinks) {
+        await tx.comboDrink.deleteMany({ where: { comboId: id } });
+        await tx.comboDrink.createMany({
+          data: drinks.map((c) => ({ comboId: id, drinkId: c.id, quantity: c.quantity })),
         });
       }
     });
-    return this.obtener(id);
+    return this.findOne(id);
   }
 
   /** Relacionados: comandas que lo vendieron. Sus componentes se borran en cascada. */
-  async eliminar(id: number): Promise<ResultadoEliminacion> {
-    const combo = await this.obtener(id);
-    const detalles = await this.prisma.detalleComanda.count({ where: { comboId: id } });
-    return eliminarOBaja(
-      detalles,
-      `El combo ${combo.nombre}`,
+  async remove(id: number): Promise<DeletionResult> {
+    const combo = await this.findOne(id);
+    const orderItems = await this.prisma.orderItem.count({ where: { comboId: id } });
+    return deleteOrDeactivate(
+      orderItems,
+      `El combo ${combo.name}`,
       () => this.prisma.combo.delete({ where: { id } }),
-      () => this.prisma.combo.update({ where: { id }, data: { estatus: 'BAJA' } }),
+      () => this.prisma.combo.update({ where: { id }, data: { status: 'INACTIVE' } }),
     );
   }
 
   /** Si el mismo producto viene dos veces, suma las cantidades. */
-  private unir(componentes: ComponenteDto[]): ComponenteDto[] {
-    const porId = new Map<number, number>();
-    for (const c of componentes) porId.set(c.id, (porId.get(c.id) ?? 0) + c.cantidad);
-    return [...porId].map(([id, cantidad]) => ({ id, cantidad }));
+  private merge(items: ComboItemDto[]): ComboItemDto[] {
+    const byId = new Map<number, number>();
+    for (const c of items) byId.set(c.id, (byId.get(c.id) ?? 0) + c.quantity);
+    return [...byId].map(([id, quantity]) => ({ id, quantity }));
   }
 
   /**
    * Al menos un producto; todos existen y están activos. Al modificar, un producto que ya estaba
    * en el combo y luego se dio de baja puede quedarse (se marca en la UI), pero no se agregan nuevos en baja.
    */
-  private async revisarComponentes(
-    alimentos: { id: number }[],
-    bebidas: { id: number }[],
-    yaIncluidos = new Set<string>(),
+  private async ensureItems(
+    foods: { id: number }[],
+    drinks: { id: number }[],
+    alreadyIncluded = new Set<string>(),
   ): Promise<void> {
-    if (alimentos.length + bebidas.length === 0) {
+    if (foods.length + drinks.length === 0) {
       throw new BadRequestException('Agrega al menos un alimento o una bebida al combo.');
     }
-    const [filasA, filasB] = await Promise.all([
-      this.prisma.alimento.findMany({ where: { id: { in: alimentos.map((c) => c.id) } } }),
-      this.prisma.bebida.findMany({ where: { id: { in: bebidas.map((c) => c.id) } } }),
+    const [foodRows, drinkRows] = await Promise.all([
+      this.prisma.food.findMany({ where: { id: { in: foods.map((c) => c.id) } } }),
+      this.prisma.drink.findMany({ where: { id: { in: drinks.map((c) => c.id) } } }),
     ]);
-    if (filasA.length !== alimentos.length) throw new BadRequestException('Uno de los alimentos no existe.');
-    if (filasB.length !== bebidas.length) throw new BadRequestException('Una de las bebidas no existe.');
+    if (foodRows.length !== foods.length) throw new BadRequestException('Uno de los alimentos no existe.');
+    if (drinkRows.length !== drinks.length) throw new BadRequestException('Una de las bebidas no existe.');
 
-    const enBaja = [
-      ...filasA.filter((p) => p.estatus !== 'ACTIVO' && !yaIncluidos.has(`A${p.id}`)),
-      ...filasB.filter((p) => p.estatus !== 'ACTIVO' && !yaIncluidos.has(`B${p.id}`)),
+    const inactive = [
+      ...foodRows.filter((p) => p.status !== 'ACTIVE' && !alreadyIncluded.has(`F${p.id}`)),
+      ...drinkRows.filter((p) => p.status !== 'ACTIVE' && !alreadyIncluded.has(`D${p.id}`)),
     ];
-    if (enBaja.length) {
-      throw new BadRequestException(`${enBaja.map((p) => p.nombre).join(', ')} está dado de baja.`);
+    if (inactive.length) {
+      throw new BadRequestException(`${inactive.map((p) => p.name).join(', ')} está dado de baja.`);
     }
   }
 }

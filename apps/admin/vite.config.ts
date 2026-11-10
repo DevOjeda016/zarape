@@ -4,25 +4,25 @@ import react from '@vitejs/plugin-react';
 import { defaultClientConditions, defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-const raiz = resolve(import.meta.dirname, '../..');
+const root = resolve(import.meta.dirname, '../..');
 
-/** En desarrollo y preview, /api y /fotos van a la API local (mismo origen, sin CORS). */
-const proxyApi = {
+/** En desarrollo y preview, /api y /photos van a la API local (mismo origen, sin CORS). */
+const apiProxy = {
   '/api': 'http://localhost:3000',
-  '/fotos': 'http://localhost:3000',
+  '/photos': 'http://localhost:3000',
 };
 
 // https://vite.dev/config/
 export default defineConfig({
   // Los logos se sirven directo de branding/logos (una sola fuente): /jarro.svg, /isotipo.svg…
-  publicDir: resolve(raiz, 'branding/logos'),
+  publicDir: resolve(root, 'branding/logos'),
   resolve: {
     alias: { '@': resolve(import.meta.dirname, 'src') },
     // Usa el código fuente de @zarape/shared sin tener que compilarlo antes
     conditions: ['@zarape/source', ...defaultClientConditions],
   },
-  server: { port: 5173, strictPort: true, proxy: proxyApi },
-  preview: { port: 4173, strictPort: true, proxy: proxyApi },
+  server: { port: 5173, strictPort: true, proxy: apiProxy },
+  preview: { port: 4173, strictPort: true, proxy: apiProxy },
   plugins: [
     react(),
     tailwindcss(),
@@ -50,7 +50,7 @@ export default defineConfig({
         // Shell de la app y fuentes autoalojadas (subconjuntos latinos) para abrir sin conexión
         globPatterns: ['**/*.{js,css,html,svg}', '**/*latin*.woff2'],
         // La API y las fotos no son rutas de la app: el SW no responde index.html por ellas
-        navigateFallbackDenylist: [/^\/api\//, /^\/fotos\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/photos\//],
       },
     }),
   ],

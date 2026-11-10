@@ -1,93 +1,93 @@
 /**
- * Cliente HTTP de la intranet. En desarrollo Vite redirige /api y /fotos a la API (puerto 3000);
+ * Cliente HTTP de la intranet. En desarrollo Vite redirige /api y /photos a la API (puerto 3000);
  * en producción VITE_API_URL apunta al origen de la API.
  */
-export const BASE_API = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+export const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
-const CLAVE_TOKEN = 'zarape.admin.token';
+const TOKEN_KEY = 'zarape.admin.token';
 
-export const tokenGuardado = {
+export const storedToken = {
   // sessionStorage: cerrar la pestaña cierra la sesión (intranet compartida en sucursal)
-  leer: () => leerSeguro(() => sessionStorage.getItem(CLAVE_TOKEN)),
-  guardar: (token: string) => leerSeguro(() => sessionStorage.setItem(CLAVE_TOKEN, token)),
-  borrar: () => leerSeguro(() => sessionStorage.removeItem(CLAVE_TOKEN)),
+  read: () => safely(() => sessionStorage.getItem(TOKEN_KEY)),
+  save: (token: string) => safely(() => sessionStorage.setItem(TOKEN_KEY, token)),
+  clear: () => safely(() => sessionStorage.removeItem(TOKEN_KEY)),
 };
 
-function leerSeguro<T>(accion: () => T): T | null {
+function safely<T>(action: () => T): T | null {
   try {
-    return accion();
+    return action();
   } catch {
     return null;
   }
 }
 
 /** Error de la API con el mensaje listo para mostrar. */
-export class ErrorApi extends Error {
-  readonly estado: number;
+export class ApiError extends Error {
+  readonly status: number;
 
-  constructor(estado: number, mensaje: string) {
-    super(mensaje);
-    this.estado = estado;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
   }
 }
 
-/** Se llama cuando la API responde 401 (sesión vencida): AuthProvider cierra la sesión. */
-let alExpirar: (() => void) | undefined;
-export function alExpirarSesion(fn: () => void): void {
-  alExpirar = fn;
+/** Se llama cuando la API responde 401 (sesión vencida): SessionProvider cierra la sesión. */
+let onExpired: (() => void) | undefined;
+export function onSessionExpired(fn: () => void): void {
+  onExpired = fn;
 }
 
-type Metodo = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-export async function api<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Promise<T> {
-  const token = tokenGuardado.leer();
-  const esArchivo = cuerpo instanceof FormData;
-  let respuesta: Response;
+export async function api<T>(method: Method, path: string, body?: unknown): Promise<T> {
+  const token = storedToken.read();
+  const isFile = body instanceof FormData;
+  let response: Response;
   try {
-    respuesta = await fetch(`${BASE_API}/api${ruta}`, {
-      method: metodo,
+    response = await fetch(`${API_BASE}/api${path}`, {
+      method,
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(cuerpo !== undefined && !esArchivo ? { 'Content-Type': 'application/json' } : {}),
+        ...(body !== undefined && !isFile ? { 'Content-Type': 'application/json' } : {}),
       },
-      body: cuerpo === undefined ? undefined : esArchivo ? cuerpo : JSON.stringify(cuerpo),
+      body: body === undefined ? undefined : isFile ? body : JSON.stringify(body),
     });
   } catch {
-    throw new ErrorApi(0, 'Sin conexión con el servidor. Revisa tu red e intenta otra vez.');
+    throw new ApiError(0, 'Sin conexión con el servidor. Revisa tu red e intenta otra vez.');
   }
 
-  if (!respuesta.ok) {
-    const datos = (await respuesta.json().catch(() => ({}))) as { message?: string | string[] };
-    if (respuesta.status === 401 && ruta !== '/auth/login') alExpirar?.();
-    throw new ErrorApi(respuesta.status, mensajeDe(datos.message, respuesta.status));
+  if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { message?: string | string[] };
+    if (response.status === 401 && path !== '/auth/login') onExpired?.();
+    throw new ApiError(response.status, messageFrom(data.message, response.status));
   }
-  return (await respuesta.json()) as T;
+  return (await response.json()) as T;
 }
 
-function mensajeDe(mensaje: string | string[] | undefined, estado: number): string {
-  if (Array.isArray(mensaje)) return mensaje.join(' ');
-  if (mensaje) return mensaje;
-  if (estado === 413) return 'El archivo pesa demasiado.';
+function messageFrom(message: string | string[] | undefined, status: number): string {
+  if (Array.isArray(message)) return message.join(' ');
+  if (message) return message;
+  if (status === 413) return 'El archivo pesa demasiado.';
   return 'Algo salió mal. Intenta otra vez.';
 }
 
 /** Arma la query string sin los filtros vacíos. */
-export function conFiltros(ruta: string, filtros: Record<string, string | number | undefined>): string {
+export function withFilters(path: string, filters: Record<string, string | number | undefined>): string {
   const params = new URLSearchParams();
-  for (const [clave, valor] of Object.entries(filtros)) {
-    if (valor !== undefined && valor !== '') params.set(clave, String(valor));
+  for (const [key, value] of Object.entries(filters)) {
+    if (value !== undefined && value !== '') params.set(key, String(value));
   }
   const query = params.toString();
-  return query ? `${ruta}?${query}` : ruta;
+  return query ? `${path}?${query}` : path;
 }
 
-/** Las fotos subidas vienen como /fotos/…; las URL https se usan tal cual. */
-export function urlFoto(fotoUrl: string): string {
-  return fotoUrl.startsWith('/') ? `${BASE_API}${fotoUrl}` : fotoUrl;
+/** Las fotos subidas vienen como /photos/…; las URL https se usan tal cual. */
+export function photoSrc(photoUrl: string): string {
+  return photoUrl.startsWith('/') ? `${API_BASE}${photoUrl}` : photoUrl;
 }
 
-export async function subirFoto(archivo: File): Promise<string> {
-  const datos = new FormData();
-  datos.append('foto', archivo);
-  return (await api<{ url: string }>('POST', '/archivos/fotos', datos)).url;
+export async function uploadPhoto(file: File): Promise<string> {
+  const data = new FormData();
+  data.append('photo', file);
+  return (await api<{ url: string }>('POST', '/files/photos', data)).url;
 }

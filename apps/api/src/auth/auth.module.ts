@@ -7,12 +7,12 @@ import { AuthService } from './auth.service.js';
 import { JwtGuard } from './jwt.guard.js';
 import { RolesGuard } from './roles.guard.js';
 
-/** Solo para desarrollo local; en producción JWT_SECRETO es obligatorio. */
-const SECRETO_DESARROLLO = 'zarape-desarrollo-no-usar-en-produccion';
+/** Solo para desarrollo local; en producción JWT_SECRET es obligatorio. */
+const DEV_SECRET = 'zarape-dev-only-do-not-use-in-production';
 
 /**
  * Login de empleado y de cliente, JWT y guards de rol (RF01, RF16).
- * Los guards son globales: toda ruta pide sesión salvo @Publico(), y @Roles() limita por rol.
+ * Los guards son globales: toda ruta pide sesión salvo @Public(), y @Roles() limita por rol.
  */
 @Global()
 @Module({
@@ -20,11 +20,11 @@ const SECRETO_DESARROLLO = 'zarape-desarrollo-no-usar-en-produccion';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        let secret = config.get<string>('JWT_SECRETO');
+        let secret = config.get<string>('JWT_SECRET');
         if (!secret) {
-          if (config.get('NODE_ENV') === 'production') throw new Error('Falta JWT_SECRETO en el entorno.');
-          Logger.warn('JWT_SECRETO no está definido; se usa un secreto de desarrollo.', 'Auth');
-          secret = SECRETO_DESARROLLO;
+          if (config.get('NODE_ENV') === 'production') throw new Error('Falta JWT_SECRET en el entorno.');
+          Logger.warn('JWT_SECRET no está definido; se usa un secreto de desarrollo.', 'Auth');
+          secret = DEV_SECRET;
         }
         return { secret, signOptions: { expiresIn: '10h' } };
       },

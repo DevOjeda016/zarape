@@ -4,12 +4,12 @@ import react from '@vitejs/plugin-react';
 import { defaultClientConditions, defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-const raiz = resolve(import.meta.dirname, '../..');
+const root = resolve(import.meta.dirname, '../..');
 
 // https://vite.dev/config/
 export default defineConfig({
   // Los logos se sirven directo de branding/logos (una sola fuente): /jarro.svg, /isotipo.svg…
-  publicDir: resolve(raiz, 'branding/logos'),
+  publicDir: resolve(root, 'branding/logos'),
   resolve: {
     alias: { '@': resolve(import.meta.dirname, 'src') },
     // Usa el código fuente de @zarape/shared sin tener que compilarlo antes

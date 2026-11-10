@@ -1,31 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { Rol } from '../generated/prisma/enums.js';
+import { Role } from '../generated/prisma/enums.js';
 
 export class LoginDto {
   @ApiProperty({ example: 'admin' })
   @IsString()
   @IsNotEmpty({ message: 'Escribe tu usuario.' })
   @MaxLength(60)
-  nombreUsuario: string;
+  username: string;
 
   @ApiProperty({ example: 'Ab3*cdEf9_gH' })
   @IsString()
   @IsNotEmpty({ message: 'Escribe tu contraseña.' })
   @MaxLength(100)
-  contrasena: string;
+  password: string;
 }
 
-export class EmpleadoSesionDto {
+export class SessionEmployeeDto {
   @ApiProperty() id: number;
-  @ApiProperty() nombreUsuario: string;
-  @ApiProperty({ enum: Rol }) rol: Rol;
+  @ApiProperty() username: string;
+  @ApiProperty({ enum: Role }) role: Role;
 }
 
-export class RespuestaLoginDto {
+export class LoginResponseDto {
   @ApiProperty({ description: 'JWT para el encabezado Authorization: Bearer.' })
   token: string;
 
-  @ApiProperty({ type: EmpleadoSesionDto })
-  usuario: EmpleadoSesionDto;
+  @ApiProperty({ type: SessionEmployeeDto })
+  employee: SessionEmployeeDto;
 }

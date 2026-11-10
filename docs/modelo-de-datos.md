@@ -2,169 +2,190 @@
 
 Modelo relacional en PostgreSQL. La fuente de verdad será `apps/api/prisma/schema.prisma`: si algo cambia ahí, se actualiza este documento. Base para la entrega 14 (diagramación de la base de datos).
 
+Tablas, columnas y enums van en inglés (convención del código). Equivalencias con el documento de requerimientos:
+
+| Inglés | Español |
+|---|---|
+| `branch` | Sucursal |
+| `employee` | Usuario (empleado) |
+| `category` | Categoría |
+| `food` | Alimento |
+| `drink` | Bebida |
+| `combo` | Combo |
+| `customer` | Cliente |
+| `payment_method` | Medio de pago |
+| `order` | Comanda |
+| `order_item` | Detalle de comanda |
+| `payment` | Pago |
+| `marketing_expense` | Gasto de mercadeo |
+| `rating` | Calificación |
+| `ticket_number` | Turno |
+| `qr_token` | Token del QR |
+| `tax` | IVA |
+
 ## Diagrama entidad-relación
 
 ```mermaid
 erDiagram
-    SUCURSAL |o--o{ USUARIO : "asigna"
-    SUCURSAL ||--o{ COMANDA : "recibe"
-    SUCURSAL |o--o{ GASTO_MARKETING : "invierte"
-    CATEGORIA ||--o{ ALIMENTO : "agrupa"
-    CATEGORIA ||--o{ BEBIDA : "agrupa"
-    COMBO ||--o{ COMBO_ALIMENTO : "incluye"
-    ALIMENTO ||--o{ COMBO_ALIMENTO : "forma parte"
-    COMBO ||--o{ COMBO_BEBIDA : "incluye"
-    BEBIDA ||--o{ COMBO_BEBIDA : "forma parte"
-    CLIENTE ||--|| MEDIO_PAGO : "registra"
-    CLIENTE |o--o{ COMANDA : "ordena"
-    COMANDA ||--|{ DETALLE_COMANDA : "contiene"
-    ALIMENTO |o--o{ DETALLE_COMANDA : "vendido en"
-    BEBIDA |o--o{ DETALLE_COMANDA : "vendido en"
-    COMBO |o--o{ DETALLE_COMANDA : "vendido en"
-    COMANDA ||--o{ PAGO : "se paga con"
-    COMANDA ||--o| CALIFICACION : "recibe"
+    BRANCH |o--o{ EMPLOYEE : "asigna"
+    BRANCH ||--o{ ORDER : "recibe"
+    BRANCH |o--o{ MARKETING_EXPENSE : "invierte"
+    CATEGORY ||--o{ FOOD : "agrupa"
+    CATEGORY ||--o{ DRINK : "agrupa"
+    COMBO ||--o{ COMBO_FOOD : "incluye"
+    FOOD ||--o{ COMBO_FOOD : "forma parte"
+    COMBO ||--o{ COMBO_DRINK : "incluye"
+    DRINK ||--o{ COMBO_DRINK : "forma parte"
+    CUSTOMER ||--|| PAYMENT_METHOD : "registra"
+    CUSTOMER |o--o{ ORDER : "ordena"
+    ORDER ||--|{ ORDER_ITEM : "contiene"
+    FOOD |o--o{ ORDER_ITEM : "vendido en"
+    DRINK |o--o{ ORDER_ITEM : "vendido en"
+    COMBO |o--o{ ORDER_ITEM : "vendido en"
+    ORDER ||--o{ PAYMENT : "se paga con"
+    ORDER ||--o| RATING : "recibe"
 
-    SUCURSAL {
+    BRANCH {
         int id PK
-        string nombre
-        string direccion
-        decimal latitud
-        decimal longitud
-        string foto_url
+        string name
+        string address
+        decimal latitude
+        decimal longitude
+        string photo_url
         string url
-        string horarios
-        enum estatus
+        string hours
+        enum status
     }
-    USUARIO {
+    EMPLOYEE {
         int id PK
-        string nombre_usuario UK
+        string username UK
         string password_hash
-        enum rol
-        int sucursal_id FK
-        enum estatus
+        enum role
+        int branch_id FK
+        enum status
     }
-    CATEGORIA {
+    CATEGORY {
         int id PK
-        string nombre
-        enum tipo
-        enum estatus
+        string name
+        enum type
+        enum status
     }
-    ALIMENTO {
+    FOOD {
         int id PK
-        string nombre
-        string descripcion
-        string foto_url
-        decimal precio
-        int categoria_id FK
-        enum estatus
+        string name
+        string description
+        string photo_url
+        decimal price
+        int category_id FK
+        enum status
     }
-    BEBIDA {
+    DRINK {
         int id PK
-        string nombre
-        string descripcion
-        string foto_url
-        decimal precio
-        int categoria_id FK
-        enum estatus
+        string name
+        string description
+        string photo_url
+        decimal price
+        int category_id FK
+        enum status
     }
     COMBO {
         int id PK
-        string nombre
-        string descripcion
-        string foto_url
-        decimal precio
-        enum estatus
+        string name
+        string description
+        string photo_url
+        decimal price
+        enum status
     }
-    COMBO_ALIMENTO {
+    COMBO_FOOD {
         int combo_id PK
-        int alimento_id PK
-        int cantidad
+        int food_id PK
+        int quantity
     }
-    COMBO_BEBIDA {
+    COMBO_DRINK {
         int combo_id PK
-        int bebida_id PK
-        int cantidad
+        int drink_id PK
+        int quantity
     }
-    CLIENTE {
+    CUSTOMER {
         int id PK
-        string usuario UK
+        string username UK
         string password_hash
-        string nombre
-        string apellidos
-        string telefono
-        enum estatus
+        string first_name
+        string last_name
+        string phone
+        enum status
     }
-    MEDIO_PAGO {
+    PAYMENT_METHOD {
         int id PK
-        int cliente_id FK
-        string titular
-        string marca
-        string ultimos4
-        int mes_venc
-        int anio_venc
-        string calle_numero
-        string colonia
-        string ciudad
-        string estado
-        string codigo_postal
+        int customer_id FK
+        string holder_name
+        string brand
+        string last4
+        int exp_month
+        int exp_year
+        string street_address
+        string neighborhood
+        string city
+        string state
+        string postal_code
     }
-    COMANDA {
+    ORDER {
         int id PK
-        uuid token_qr UK
-        int turno
-        date fecha_turno
-        enum canal
-        enum estatus
-        int sucursal_id FK
-        int cliente_id FK
+        uuid qr_token UK
+        int ticket_number
+        date ticket_date
+        enum channel
+        enum status
+        int branch_id FK
+        int customer_id FK
         decimal subtotal
-        decimal iva
+        decimal tax
         decimal total
-        datetime creada_en
-        datetime pagada_en
-        datetime lista_en
-        datetime entregada_en
+        datetime created_at
+        datetime paid_at
+        datetime ready_at
+        datetime delivered_at
     }
-    DETALLE_COMANDA {
+    ORDER_ITEM {
         int id PK
-        int comanda_id FK
-        enum tipo
-        int alimento_id FK
-        int bebida_id FK
+        int order_id FK
+        enum type
+        int food_id FK
+        int drink_id FK
         int combo_id FK
-        string nombre
-        int cantidad
-        decimal precio_unitario
-        decimal total_linea
+        string name
+        int quantity
+        decimal unit_price
+        decimal line_total
     }
-    PAGO {
+    PAYMENT {
         int id PK
-        int comanda_id FK
-        string titular
-        string marca
-        string ultimos4
-        int mes_venc
-        int anio_venc
-        decimal monto
-        enum estatus
-        string referencia
-        datetime fecha
+        int order_id FK
+        string holder_name
+        string brand
+        string last4
+        int exp_month
+        int exp_year
+        decimal amount
+        enum status
+        string reference
+        datetime paid_at
     }
-    GASTO_MARKETING {
+    MARKETING_EXPENSE {
         int id PK
-        string campana
-        string canal
-        decimal monto
-        date fecha_inicio
-        date fecha_fin
-        int sucursal_id FK
+        string campaign
+        string channel
+        decimal amount
+        date start_date
+        date end_date
+        int branch_id FK
     }
-    CALIFICACION {
+    RATING {
         int id PK
-        int comanda_id FK
-        int estrellas
-        string comentario
-        datetime creada_en
+        int order_id FK
+        int stars
+        string comment
+        datetime created_at
     }
 ```
 
@@ -172,38 +193,38 @@ erDiagram
 
 | Enum | Valores |
 |---|---|
-| `estatus` (catálogos incluidas las categorías, usuario, cliente) | `ACTIVO`, `BAJA` |
-| `rol` | `ADMIN`, `COCINA` |
-| `CATEGORIA.tipo` | `ALIMENTO`, `BEBIDA` |
-| `COMANDA.canal` | `KIOSKO`, `DRIVE_THRU` |
-| `COMANDA.estatus` | `PENDIENTE`, `PAGADA`, `EN_COCINA`, `LISTA`, `ENTREGADA`, `CANCELADA` |
-| `DETALLE_COMANDA.tipo` | `ALIMENTO`, `BEBIDA`, `COMBO` |
-| `PAGO.estatus` | `APROBADO`, `RECHAZADO` |
+| `status` (catálogos incluidas las categorías, empleado, cliente) | `ACTIVE`, `INACTIVE` (baja) |
+| `role` | `ADMIN`, `KITCHEN` |
+| `category.type` | `FOOD`, `DRINK` |
+| `order.channel` | `KIOSK`, `DRIVE_THRU` |
+| `order.status` | `PENDING`, `PAID`, `IN_KITCHEN`, `READY`, `DELIVERED`, `CANCELLED` |
+| `order_item.type` | `FOOD`, `DRINK`, `COMBO` |
+| `payment.status` | `APPROVED`, `DECLINED` |
 
 ## Reglas del modelo
 
-- **Dinero** en `decimal(10,2)`, nunca `float`. Los precios del catálogo incluyen IVA; la comanda guarda `subtotal`, `iva` y `total` calculados por la API.
-- **Detalle con foto fija del momento:** `DETALLE_COMANDA` copia `nombre` y `precio_unitario`. Si el precio cambia después, los tickets viejos no cambian.
-- **Un solo producto por línea:** en `DETALLE_COMANDA` solo uno de `alimento_id`, `bebida_id` o `combo_id` tiene valor, según `tipo` (restricción `CHECK`).
-- **Comanda del kiosko sin cliente:** `cliente_id` es nulo en el canal `KIOSKO` y obligatorio en `DRIVE_THRU` (restricción `CHECK`).
-- **Turno:** consecutivo diario por sucursal (índice único en `sucursal_id` + `fecha_turno` + `turno`). `turno` y `fecha_turno` (día local en que se pagó) se asignan juntos al pagar (restricción `CHECK`); antes los dos son nulos.
+- **Dinero** en `decimal(10,2)`, nunca `float`. Los precios del catálogo incluyen IVA; la comanda guarda `subtotal`, `tax` y `total` calculados por la API.
+- **Detalle con foto fija del momento:** `order_item` copia `name` y `unit_price`. Si el precio cambia después, los tickets viejos no cambian.
+- **Un solo producto por línea:** en `order_item` solo uno de `food_id`, `drink_id` o `combo_id` tiene valor, según `type` (restricción `CHECK`).
+- **Comanda del kiosko sin cliente:** `customer_id` es nulo en el canal `KIOSK` y obligatorio en `DRIVE_THRU` (restricción `CHECK`).
+- **Turno:** `ticket_number`, consecutivo diario por sucursal (índice único en `branch_id` + `ticket_date` + `ticket_number`). Los dos se asignan juntos al pagar (restricción `CHECK`); antes son nulos.
 - **Fechas y horas** en `timestamptz`, para que las horas del dashboard no dependan de la zona del servidor.
-- Las restricciones `CHECK` no caben en `schema.prisma`: viven en la migración inicial (`apps/api/prisma/migrations/20261108000000_inicial/migration.sql`). Prisma no las borra en migraciones nuevas.
-- **QR:** guarda `token_qr` (UUID), nunca el `id` consecutivo, para que nadie adivine pedidos ajenos.
+- Las restricciones `CHECK` no caben en `schema.prisma`: viven en la migración inicial (`apps/api/prisma/migrations/20261110000000_init/migration.sql`). Prisma no las borra en migraciones nuevas.
+- **QR:** guarda `qr_token` (UUID), nunca el `id` consecutivo, para que nadie adivine pedidos ajenos.
 - **Tarjetas:** solo últimos 4 dígitos, marca y vencimiento. Nunca número completo ni CVV (ver `docs/arquitectura.md`).
-- **Eliminar:** borrado físico solo si no hay registros relacionados; si los hay, `estatus = BAJA`. `CLIENTE` siempre pasa a `BAJA`.
-- **Horas de la comanda** (`pagada_en`, `lista_en`, `entregada_en`): dan el tiempo de preparación del dashboard.
+- **Eliminar:** borrado físico solo si no hay registros relacionados; si los hay, `status = INACTIVE`. `customer` siempre pasa a `INACTIVE`.
+- **Horas de la comanda** (`paid_at`, `ready_at`, `delivered_at`): dan el tiempo de preparación del dashboard.
 
 ## De dónde sale cada indicador del dashboard
 
 | Indicador | Cálculo |
 |---|---|
-| Ventas totales, por sucursal, por canal | `SUM(total)` de comandas pagadas, agrupado por `sucursal_id` o `canal` |
+| Ventas totales, por sucursal, por canal | `SUM(total)` de comandas pagadas, agrupado por `branch_id` o `channel` |
 | Ticket promedio | `AVG(total)` de comandas pagadas |
-| Productos y combos más vendidos | `SUM(cantidad)` en `DETALLE_COMANDA` por producto |
-| Horarios de mayor demanda | Comandas por hora de `pagada_en` |
-| Comandas por estatus | `COUNT` por `estatus` |
-| Tiempo promedio de preparación | `AVG(lista_en - pagada_en)` |
-| Clientes registrados y recompra | `CLIENTE` activos; clientes con 2 o más comandas en 30 días |
-| Costo de adquisición y ROI | `GASTO_MARKETING` contra clientes nuevos e ingresos del periodo |
-| Satisfacción | `AVG(estrellas)` de `CALIFICACION` |
+| Productos y combos más vendidos | `SUM(quantity)` en `order_item` por producto |
+| Horarios de mayor demanda | Comandas por hora de `paid_at` |
+| Comandas por estatus | `COUNT` por `status` |
+| Tiempo promedio de preparación | `AVG(ready_at - paid_at)` |
+| Clientes registrados y recompra | `customer` activos; clientes con 2 o más comandas en 30 días |
+| Costo de adquisición y ROI | `marketing_expense` contra clientes nuevos e ingresos del periodo |
+| Satisfacción | `AVG(stars)` de `rating` |

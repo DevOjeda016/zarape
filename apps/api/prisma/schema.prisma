@@ -1,13 +1,13 @@
 // El Zarape: modelo de datos (fuente de verdad; se documenta en docs/modelo-de-datos.md).
 //
 // Convenciones:
-// - Modelos y campos en camelCase para el código; tablas y columnas en snake_case (@map / @@map).
+// - Código en inglés: modelos y campos en camelCase; tablas y columnas en snake_case (@map / @@map).
 // - Dinero en decimal(10,2), nunca float. Los precios del catálogo incluyen IVA.
-// - Borrado: físico solo si no hay registros relacionados; si los hay, estatus = BAJA.
+// - Borrado: físico solo si no hay registros relacionados; si los hay, status = INACTIVE.
 //   Por eso las relaciones hacia catálogos usan onDelete: Restrict.
 //
 // Reglas que Prisma no puede expresar aquí (CHECK) viven en la migración inicial:
-//   prisma/migrations/20261108000000_inicial/migration.sql
+//   prisma/migrations/20261110000000_init/migration.sql
 
 generator client {
   provider            = "prisma-client"
@@ -22,320 +22,320 @@ datasource db {
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
-/// Estatus de catálogos, usuarios y clientes.
-enum Estatus {
-  ACTIVO
-  BAJA
+/// Estatus de catálogos, empleados y clientes. INACTIVE = baja lógica.
+enum Status {
+  ACTIVE
+  INACTIVE
 
-  @@map("estatus")
+  @@map("status")
 }
 
-enum Rol {
+enum Role {
   ADMIN
-  COCINA
+  KITCHEN
 
-  @@map("rol")
+  @@map("role")
 }
 
-enum TipoCategoria {
-  ALIMENTO
-  BEBIDA
+enum CategoryType {
+  FOOD
+  DRINK
 
-  @@map("tipo_categoria")
+  @@map("category_type")
 }
 
-enum Canal {
-  KIOSKO
+enum Channel {
+  KIOSK
   DRIVE_THRU
 
-  @@map("canal")
+  @@map("channel")
 }
 
-enum EstatusComanda {
-  PENDIENTE
-  PAGADA
-  EN_COCINA
-  LISTA
-  ENTREGADA
-  CANCELADA
+enum OrderStatus {
+  PENDING
+  PAID
+  IN_KITCHEN
+  READY
+  DELIVERED
+  CANCELLED
 
-  @@map("estatus_comanda")
+  @@map("order_status")
 }
 
-enum TipoProducto {
-  ALIMENTO
-  BEBIDA
+enum ProductType {
+  FOOD
+  DRINK
   COMBO
 
-  @@map("tipo_producto")
+  @@map("product_type")
 }
 
-enum EstatusPago {
-  APROBADO
-  RECHAZADO
+enum PaymentStatus {
+  APPROVED
+  DECLINED
 
-  @@map("estatus_pago")
+  @@map("payment_status")
 }
 
 // ─── Módulo I: catálogos (RF02–RF06) ──────────────────────────────────────────
 
-/// RF02
-model Sucursal {
+/// RF02: sucursal.
+model Branch {
   id        Int     @id @default(autoincrement())
-  nombre    String
-  direccion String
-  latitud   Decimal @db.Decimal(9, 6)
-  longitud  Decimal @db.Decimal(9, 6)
-  fotoUrl   String  @map("foto_url")
+  name      String
+  address   String
+  latitude  Decimal @db.Decimal(9, 6)
+  longitude Decimal @db.Decimal(9, 6)
+  photoUrl  String  @map("photo_url")
   url       String
-  horarios  String
-  estatus   Estatus @default(ACTIVO)
+  hours     String
+  status    Status  @default(ACTIVE)
 
-  usuarios        Usuario[]
-  comandas        Comanda[]
-  gastosMarketing GastoMarketing[]
+  employees         Employee[]
+  orders            Order[]
+  marketingExpenses MarketingExpense[]
 
-  @@map("sucursal")
+  @@map("branch")
 }
 
 /// RF03: empleado. La contraseña aleatoria de 12 caracteres se guarda como hash (bcrypt).
-model Usuario {
-  id            Int     @id @default(autoincrement())
-  nombreUsuario String  @unique @map("nombre_usuario")
-  passwordHash  String  @map("password_hash")
-  rol           Rol
-  sucursalId    Int?    @map("sucursal_id")
-  estatus       Estatus @default(ACTIVO)
+model Employee {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
+  passwordHash String  @map("password_hash")
+  role         Role
+  branchId     Int?    @map("branch_id")
+  status       Status  @default(ACTIVE)
 
-  sucursal Sucursal? @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
+  branch Branch? @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  @@map("usuario")
+  @@map("employee")
 }
 
 /// Categorías de alimentos (Platillos, Ensaladas…) y de bebidas (Refrescos, Aguas…).
-/// Con estatus para aplicar la regla de eliminar: si tiene productos, pasa a BAJA.
-model Categoria {
-  id      Int           @id @default(autoincrement())
-  nombre  String
-  tipo    TipoCategoria
-  estatus Estatus       @default(ACTIVO)
+/// Con estatus para aplicar la regla de eliminar: si tiene productos, pasa a INACTIVE.
+model Category {
+  id     Int          @id @default(autoincrement())
+  name   String
+  type   CategoryType
+  status Status       @default(ACTIVE)
 
-  alimentos Alimento[]
-  bebidas   Bebida[]
+  foods  Food[]
+  drinks Drink[]
 
-  @@map("categoria")
+  @@map("category")
 }
 
-/// RF04
-model Alimento {
+/// RF04: alimento.
+model Food {
   id          Int     @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  fotoUrl     String  @map("foto_url")
-  precio      Decimal @db.Decimal(10, 2)
-  categoriaId Int     @map("categoria_id")
-  estatus     Estatus @default(ACTIVO)
+  name        String
+  description String
+  photoUrl    String  @map("photo_url")
+  price       Decimal @db.Decimal(10, 2)
+  categoryId  Int     @map("category_id")
+  status      Status  @default(ACTIVE)
 
-  categoria Categoria        @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
-  combos    ComboAlimento[]
-  detalles  DetalleComanda[]
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  combos     ComboFood[]
+  orderItems OrderItem[]
 
-  @@map("alimento")
+  @@map("food")
 }
 
-/// RF05
-model Bebida {
+/// RF05: bebida.
+model Drink {
   id          Int     @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  fotoUrl     String  @map("foto_url")
-  precio      Decimal @db.Decimal(10, 2)
-  categoriaId Int     @map("categoria_id")
-  estatus     Estatus @default(ACTIVO)
+  name        String
+  description String
+  photoUrl    String  @map("photo_url")
+  price       Decimal @db.Decimal(10, 2)
+  categoryId  Int     @map("category_id")
+  status      Status  @default(ACTIVE)
 
-  categoria Categoria        @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
-  combos    ComboBebida[]
-  detalles  DetalleComanda[]
+  category   Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  combos     ComboDrink[]
+  orderItems OrderItem[]
 
-  @@map("bebida")
+  @@map("drink")
 }
 
-/// RF06
+/// RF06: combo de alimentos y bebidas.
 model Combo {
   id          Int     @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  fotoUrl     String  @map("foto_url")
-  precio      Decimal @db.Decimal(10, 2)
-  estatus     Estatus @default(ACTIVO)
+  name        String
+  description String
+  photoUrl    String  @map("photo_url")
+  price       Decimal @db.Decimal(10, 2)
+  status      Status  @default(ACTIVE)
 
-  alimentos ComboAlimento[]
-  bebidas   ComboBebida[]
-  detalles  DetalleComanda[]
+  foods      ComboFood[]
+  drinks     ComboDrink[]
+  orderItems OrderItem[]
 
   @@map("combo")
 }
 
-model ComboAlimento {
-  comboId    Int @map("combo_id")
-  alimentoId Int @map("alimento_id")
-  cantidad   Int @default(1)
+model ComboFood {
+  comboId  Int @map("combo_id")
+  foodId   Int @map("food_id")
+  quantity Int @default(1)
 
-  combo    Combo    @relation(fields: [comboId], references: [id], onDelete: Cascade)
-  alimento Alimento @relation(fields: [alimentoId], references: [id], onDelete: Restrict)
+  combo Combo @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  food  Food  @relation(fields: [foodId], references: [id], onDelete: Restrict)
 
-  @@id([comboId, alimentoId])
-  @@map("combo_alimento")
+  @@id([comboId, foodId])
+  @@map("combo_food")
 }
 
-model ComboBebida {
+model ComboDrink {
   comboId  Int @map("combo_id")
-  bebidaId Int @map("bebida_id")
-  cantidad Int @default(1)
+  drinkId  Int @map("drink_id")
+  quantity Int @default(1)
 
-  combo  Combo  @relation(fields: [comboId], references: [id], onDelete: Cascade)
-  bebida Bebida @relation(fields: [bebidaId], references: [id], onDelete: Restrict)
+  combo Combo @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  drink Drink @relation(fields: [drinkId], references: [id], onDelete: Restrict)
 
-  @@id([comboId, bebidaId])
-  @@map("combo_bebida")
+  @@id([comboId, drinkId])
+  @@map("combo_drink")
 }
 
 // ─── Módulo III: cliente del drive thru (RF17) ───────────────────────────────
 
-/// RF17. Nunca se borra: se da de baja con estatus = BAJA (RDF1702).
-model Cliente {
+/// RF17. Nunca se borra: se da de baja con status = INACTIVE (RDF1702).
+model Customer {
   id           Int     @id @default(autoincrement())
-  usuario      String  @unique
+  username     String  @unique
   passwordHash String  @map("password_hash")
-  nombre       String
-  apellidos    String
-  telefono     String
-  estatus      Estatus @default(ACTIVO)
+  firstName    String  @map("first_name")
+  lastName     String  @map("last_name")
+  phone        String
+  status       Status  @default(ACTIVE)
 
-  medioPago MedioPago?
-  comandas  Comanda[]
+  paymentMethod PaymentMethod?
+  orders        Order[]
 
-  @@map("cliente")
+  @@map("customer")
 }
 
 /// Medio de pago del cliente. Nunca se guarda el número completo ni el CVV.
-model MedioPago {
-  id           Int    @id @default(autoincrement())
-  clienteId    Int    @unique @map("cliente_id")
-  titular      String
-  marca        String
-  ultimos4     String @db.Char(4)
-  mesVenc      Int    @map("mes_venc")
-  anioVenc     Int    @map("anio_venc")
-  calleNumero  String @map("calle_numero")
-  colonia      String
-  ciudad       String
-  estado       String
-  codigoPostal String @map("codigo_postal") @db.Char(5)
+model PaymentMethod {
+  id            Int    @id @default(autoincrement())
+  customerId    Int    @unique @map("customer_id")
+  holderName    String @map("holder_name")
+  brand         String
+  last4         String @db.Char(4)
+  expMonth      Int    @map("exp_month")
+  expYear       Int    @map("exp_year")
+  streetAddress String @map("street_address")
+  neighborhood  String
+  city          String
+  state         String
+  postalCode    String @map("postal_code") @db.Char(5)
 
-  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
-  @@map("medio_pago")
+  @@map("payment_method")
 }
 
 // ─── Comandas y pagos (RF09–RF13, RF19, RF20) ────────────────────────────────
 
-/// RF10. El QR usa token_qr (UUID), nunca el id consecutivo.
-/// Turno: consecutivo diario por sucursal; fecha_turno es el día local en que se asignó (al pagar).
-model Comanda {
-  id          Int            @id @default(autoincrement())
-  tokenQr     String         @unique @default(dbgenerated("gen_random_uuid()")) @map("token_qr") @db.Uuid
-  turno       Int?
-  fechaTurno  DateTime?      @map("fecha_turno") @db.Date
-  canal       Canal
-  estatus     EstatusComanda @default(PENDIENTE)
-  sucursalId  Int            @map("sucursal_id")
-  clienteId   Int?           @map("cliente_id")
-  subtotal    Decimal        @db.Decimal(10, 2)
-  iva         Decimal        @db.Decimal(10, 2)
-  total       Decimal        @db.Decimal(10, 2)
-  creadaEn    DateTime       @default(now()) @map("creada_en") @db.Timestamptz(3)
-  pagadaEn    DateTime?      @map("pagada_en") @db.Timestamptz(3)
-  listaEn     DateTime?      @map("lista_en") @db.Timestamptz(3)
-  entregadaEn DateTime?      @map("entregada_en") @db.Timestamptz(3)
+/// RF10: comanda. El QR usa qr_token (UUID), nunca el id consecutivo.
+/// ticketNumber: turno, consecutivo diario por sucursal; ticketDate es el día local en que se asignó (al pagar).
+model Order {
+  id           Int         @id @default(autoincrement())
+  qrToken      String      @unique @default(dbgenerated("gen_random_uuid()")) @map("qr_token") @db.Uuid
+  ticketNumber Int?        @map("ticket_number")
+  ticketDate   DateTime?   @map("ticket_date") @db.Date
+  channel      Channel
+  status       OrderStatus @default(PENDING)
+  branchId     Int         @map("branch_id")
+  customerId   Int?        @map("customer_id")
+  subtotal     Decimal     @db.Decimal(10, 2)
+  tax          Decimal     @db.Decimal(10, 2)
+  total        Decimal     @db.Decimal(10, 2)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  paidAt       DateTime?   @map("paid_at") @db.Timestamptz(3)
+  readyAt      DateTime?   @map("ready_at") @db.Timestamptz(3)
+  deliveredAt  DateTime?   @map("delivered_at") @db.Timestamptz(3)
 
-  sucursal     Sucursal         @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
-  cliente      Cliente?         @relation(fields: [clienteId], references: [id], onDelete: Restrict)
-  detalles     DetalleComanda[]
-  pagos        Pago[]
-  calificacion Calificacion?
+  branch   Branch      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  customer Customer?   @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  items    OrderItem[]
+  payments Payment[]
+  rating   Rating?
 
-  @@unique([sucursalId, fechaTurno, turno], map: "comanda_turno_diario_key")
-  @@map("comanda")
+  @@unique([branchId, ticketDate, ticketNumber], map: "order_daily_ticket_key")
+  @@map("order")
 }
 
-/// RF11. Copia nombre y precio del momento: si el catálogo cambia, el ticket no.
-/// Solo uno de alimento_id, bebida_id o combo_id tiene valor, según tipo (CHECK en la migración).
-model DetalleComanda {
-  id             Int          @id @default(autoincrement())
-  comandaId      Int          @map("comanda_id")
-  tipo           TipoProducto
-  alimentoId     Int?         @map("alimento_id")
-  bebidaId       Int?         @map("bebida_id")
-  comboId        Int?         @map("combo_id")
-  nombre         String
-  cantidad       Int
-  precioUnitario Decimal      @map("precio_unitario") @db.Decimal(10, 2)
-  totalLinea     Decimal      @map("total_linea") @db.Decimal(10, 2)
+/// RF11: detalle de la comanda. Copia nombre y precio del momento: si el catálogo cambia, el ticket no.
+/// Solo uno de food_id, drink_id o combo_id tiene valor, según type (CHECK en la migración).
+model OrderItem {
+  id        Int         @id @default(autoincrement())
+  orderId   Int         @map("order_id")
+  type      ProductType
+  foodId    Int?        @map("food_id")
+  drinkId   Int?        @map("drink_id")
+  comboId   Int?        @map("combo_id")
+  name      String
+  quantity  Int
+  unitPrice Decimal     @map("unit_price") @db.Decimal(10, 2)
+  lineTotal Decimal     @map("line_total") @db.Decimal(10, 2)
 
-  comanda  Comanda   @relation(fields: [comandaId], references: [id], onDelete: Cascade)
-  alimento Alimento? @relation(fields: [alimentoId], references: [id], onDelete: Restrict)
-  bebida   Bebida?   @relation(fields: [bebidaId], references: [id], onDelete: Restrict)
-  combo    Combo?    @relation(fields: [comboId], references: [id], onDelete: Restrict)
+  order Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  food  Food?  @relation(fields: [foodId], references: [id], onDelete: Restrict)
+  drink Drink? @relation(fields: [drinkId], references: [id], onDelete: Restrict)
+  combo Combo? @relation(fields: [comboId], references: [id], onDelete: Restrict)
 
-  @@map("detalle_comanda")
+  @@map("order_item")
 }
 
-/// RF13. Simulador: solo titular, marca, últimos 4 y vencimiento. Nunca número completo ni CVV.
-model Pago {
-  id         Int         @id @default(autoincrement())
-  comandaId  Int         @map("comanda_id")
-  titular    String
-  marca      String
-  ultimos4   String      @db.Char(4)
-  mesVenc    Int         @map("mes_venc")
-  anioVenc   Int         @map("anio_venc")
-  monto      Decimal     @db.Decimal(10, 2)
-  estatus    EstatusPago
-  referencia String
-  fecha      DateTime    @default(now()) @db.Timestamptz(3)
+/// RF13: pago simulado. Solo titular, marca, últimos 4 y vencimiento. Nunca número completo ni CVV.
+model Payment {
+  id         Int           @id @default(autoincrement())
+  orderId    Int           @map("order_id")
+  holderName String        @map("holder_name")
+  brand      String
+  last4      String        @db.Char(4)
+  expMonth   Int           @map("exp_month")
+  expYear    Int           @map("exp_year")
+  amount     Decimal       @db.Decimal(10, 2)
+  status     PaymentStatus
+  reference  String
+  paidAt     DateTime      @default(now()) @map("paid_at") @db.Timestamptz(3)
 
-  comanda Comanda @relation(fields: [comandaId], references: [id], onDelete: Restrict)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
 
-  @@map("pago")
+  @@map("payment")
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 /// Inversión en mercadeo, para costo de adquisición y ROI.
-model GastoMarketing {
-  id          Int      @id @default(autoincrement())
-  campana     String
-  canal       String
-  monto       Decimal  @db.Decimal(10, 2)
-  fechaInicio DateTime @map("fecha_inicio") @db.Date
-  fechaFin    DateTime @map("fecha_fin") @db.Date
-  sucursalId  Int?     @map("sucursal_id")
+model MarketingExpense {
+  id        Int      @id @default(autoincrement())
+  campaign  String
+  channel   String
+  amount    Decimal  @db.Decimal(10, 2)
+  startDate DateTime @map("start_date") @db.Date
+  endDate   DateTime @map("end_date") @db.Date
+  branchId  Int?     @map("branch_id")
 
-  sucursal Sucursal? @relation(fields: [sucursalId], references: [id], onDelete: Restrict)
+  branch Branch? @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  @@map("gasto_marketing")
+  @@map("marketing_expense")
 }
 
 /// Satisfacción del cliente con una comanda.
-model Calificacion {
-  id         Int      @id @default(autoincrement())
-  comandaId  Int      @unique @map("comanda_id")
-  estrellas  Int
-  comentario String?
-  creadaEn   DateTime @default(now()) @map("creada_en") @db.Timestamptz(3)
+model Rating {
+  id        Int      @id @default(autoincrement())
+  orderId   Int      @unique @map("order_id")
+  stars     Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
 
-  comanda Comanda @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  @@map("calificacion")
+  @@map("rating")
 }

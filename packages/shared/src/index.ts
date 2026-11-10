@@ -1,2 +1,2 @@
-export * from './estatus.js';
-export * from './comanda.js';
+export * from './status.js';
+export * from './order.js';

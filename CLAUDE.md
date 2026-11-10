@@ -161,10 +161,10 @@ API y base de datos (`apps/api`):
 - Copiar `apps/api/.env.example` a `apps/api/.env` y poner el `DATABASE_URL`. La API arranca sin BD: Prisma se conecta en la primera consulta.
 - `pnpm --filter @zarape/api <script>` con `prisma:validate`, `prisma:generate`, `prisma:migrate` (crea y aplica migraciones en desarrollo), `prisma:deploy` y `prisma:studio`.
 - Sin PostgreSQL instalado: `pnpm --filter @zarape/api exec prisma dev` levanta una base local y muestra su URL.
-- `pnpm --filter @zarape/api db:seed`: datos de prueba (menú y combos del plan de mercadeo, sucursales, usuarios `admin` y `cocina`; contraseñas en `SEED_CONTRASENA_*` o se imprimen una vez).
-- Auth: toda ruta de la API pide JWT salvo las marcadas con `@Publico()`; `@Roles('ADMIN')` limita por rol (`apps/api/src/auth/decoradores.ts`). En producción `JWT_SECRETO` es obligatorio.
-- Pruebas e2e: corren con `DATABASE_URL_PRUEBAS` (si no, se saltan); crean y borran registros `e2e-`.
-- En desarrollo, el admin manda `/api` y `/fotos` a la API por el proxy de Vite.
+- `pnpm --filter @zarape/api db:seed`: datos de prueba (menú y combos del plan de mercadeo, sucursales, empleados `admin` y `cocina`; contraseñas en `SEED_ADMIN_PASSWORD` / `SEED_KITCHEN_PASSWORD` o se imprimen una vez).
+- Auth: toda ruta de la API pide JWT salvo las marcadas con `@Public()`; `@Roles('ADMIN')` limita por rol (`apps/api/src/auth/decorators.ts`). En producción `JWT_SECRET` es obligatorio.
+- Pruebas e2e: corren con `TEST_DATABASE_URL` (si no, se saltan); crean y borran registros `e2e-`. `DATABASE_URL` acepta `?schema=` (app, seed y migraciones usan el mismo esquema).
+- En desarrollo, el admin manda `/api` y `/photos` a la API por el proxy de Vite.
 
 Componentes de shadcn: `pnpm --filter @zarape/ui exec shadcn add <componente>` (quedan en `packages/ui/src/components`). Desde una app, el CLI agrega dependencias a esa app; mejor desde `packages/ui`.
 

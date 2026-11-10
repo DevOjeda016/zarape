@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-10 | [005-codigo-en-ingles](2026-11-10-005-codigo-en-ingles.md) | Código, BD, rutas REST y env en inglés (Branch, Employee, Food…); migraciones juntas en una inicial; UI y docs siguen en español. |
 | 2026-11-10 | [004-admin-modulo-gestion](2026-11-10-004-admin-modulo-gestion.md) | Intranet del Módulo I: login, rutas por rol, menú de gestión y pantallas de los catálogos con búsqueda, alta, edición, baja e impresión. |
 | 2026-11-10 | [003-api-modulo-gestion](2026-11-10-003-api-modulo-gestion.md) | API del Módulo I: login de empleado con JWT y roles, CRUD y búsqueda de los catálogos con regla de baja, fotos, seed y pruebas e2e. |
 | 2026-11-10 | [002-script-logos-esm](2026-11-10-002-script-logos-esm.md) | El script de logos vuelve a correr como módulo ES (`import` en vez de `require`). |

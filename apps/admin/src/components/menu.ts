@@ -1,22 +1,22 @@
 import { CoffeeIcon, ForkKnifeIcon, type Icon, PackageIcon, StorefrontIcon, TagIcon, UsersIcon } from '@phosphor-icons/react';
 
-export interface OpcionMenu {
-  ruta: string;
-  texto: string;
-  descripcion: string;
-  icono: Icon;
+export interface MenuItem {
+  path: string;
+  label: string;
+  description: string;
+  icon: Icon;
 }
 
 /** RDF0101: menú de gestión con Sucursal, Usuario, Alimento, Bebida y Combo. */
-export const MENU_GESTION: OpcionMenu[] = [
-  { ruta: '/sucursales', texto: 'Sucursales', descripcion: 'Dirección, GPS, foto, página y horarios.', icono: StorefrontIcon },
-  { ruta: '/usuarios', texto: 'Usuarios', descripcion: 'Empleados y sus contraseñas.', icono: UsersIcon },
-  { ruta: '/alimentos', texto: 'Alimentos', descripcion: 'Platillos, ensaladas, tortas, postres y fruta.', icono: ForkKnifeIcon },
-  { ruta: '/bebidas', texto: 'Bebidas', descripcion: 'Cafés, jugos, aguas y refrescos.', icono: CoffeeIcon },
-  { ruta: '/combos', texto: 'Combos', descripcion: 'Paquetes con ahorro para el cliente.', icono: PackageIcon },
+export const CATALOG_MENU: MenuItem[] = [
+  { path: '/branches', label: 'Sucursales', description: 'Dirección, GPS, foto, página y horarios.', icon: StorefrontIcon },
+  { path: '/employees', label: 'Usuarios', description: 'Empleados y sus contraseñas.', icon: UsersIcon },
+  { path: '/foods', label: 'Alimentos', description: 'Platillos, ensaladas, tortas, postres y fruta.', icon: ForkKnifeIcon },
+  { path: '/drinks', label: 'Bebidas', description: 'Cafés, jugos, aguas y refrescos.', icon: CoffeeIcon },
+  { path: '/combos', label: 'Combos', description: 'Paquetes con ahorro para el cliente.', icon: PackageIcon },
 ];
 
 /** Catálogos de apoyo que usan los de arriba. */
-export const MENU_APOYO: OpcionMenu[] = [
-  { ruta: '/categorias', texto: 'Categorías', descripcion: 'Cómo se agrupa el menú.', icono: TagIcon },
+export const SUPPORT_MENU: MenuItem[] = [
+  { path: '/categories', label: 'Categorías', description: 'Cómo se agrupa el menú.', icon: TagIcon },
 ];
