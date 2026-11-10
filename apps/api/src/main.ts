@@ -1,15 +1,17 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
+import { configurarApp } from './configurar-app.js';
 import { SocketIoAdapter } from './tiempo-real/socket-io.adapter.js';
 
 /** Apps de Vite en desarrollo: admin 5173, pos 5174, drive-thru 5175. */
 const ORIGENES_DESARROLLO = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'];
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
 
   const origenes =
@@ -19,10 +21,9 @@ async function bootstrap() {
       .map((origen) => origen.trim())
       .filter(Boolean) ?? ORIGENES_DESARROLLO;
 
-  app.setGlobalPrefix('api');
+  configurarApp(app);
   app.enableCors({ origin: origenes });
   app.useWebSocketAdapter(new SocketIoAdapter(app, origenes));
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableShutdownHooks();
 
   const documento = SwaggerModule.createDocument(

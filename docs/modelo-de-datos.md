@@ -47,6 +47,7 @@ erDiagram
         int id PK
         string nombre
         enum tipo
+        enum estatus
     }
     ALIMENTO {
         int id PK
@@ -171,7 +172,7 @@ erDiagram
 
 | Enum | Valores |
 |---|---|
-| `estatus` (catálogos, usuario, cliente) | `ACTIVO`, `BAJA` |
+| `estatus` (catálogos incluidas las categorías, usuario, cliente) | `ACTIVO`, `BAJA` |
 | `rol` | `ADMIN`, `COCINA` |
 | `CATEGORIA.tipo` | `ALIMENTO`, `BEBIDA` |
 | `COMANDA.canal` | `KIOSKO`, `DRIVE_THRU` |

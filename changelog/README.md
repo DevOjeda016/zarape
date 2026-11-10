@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-10 | [003-api-modulo-gestion](2026-11-10-003-api-modulo-gestion.md) | API del Módulo I: login de empleado con JWT y roles, CRUD y búsqueda de los catálogos con regla de baja, fotos, seed y pruebas e2e. |
 | 2026-11-10 | [002-script-logos-esm](2026-11-10-002-script-logos-esm.md) | El script de logos vuelve a correr como módulo ES (`import` en vez de `require`). |
 | 2026-11-10 | [001-herramientas-de-ia](2026-11-10-001-herramientas-de-ia.md) | Skills y MCP oficiales para Claude Code (shadcn, Prisma, Motion, Chrome DevTools), fijados por versión. |
 | 2026-11-08 | [011-nombres-de-apps](2026-11-08-011-nombres-de-apps.md) | Apps renombradas a inglés estándar: `gestion` → `admin`, `en-sitio` → `pos`. |

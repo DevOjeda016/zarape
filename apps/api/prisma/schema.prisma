@@ -113,10 +113,12 @@ model Usuario {
 }
 
 /// Categorías de alimentos (Platillos, Ensaladas…) y de bebidas (Refrescos, Aguas…).
+/// Con estatus para aplicar la regla de eliminar: si tiene productos, pasa a BAJA.
 model Categoria {
-  id     Int           @id @default(autoincrement())
-  nombre String
-  tipo   TipoCategoria
+  id      Int           @id @default(autoincrement())
+  nombre  String
+  tipo    TipoCategoria
+  estatus Estatus       @default(ACTIVO)
 
   alimentos Alimento[]
   bebidas   Bebida[]

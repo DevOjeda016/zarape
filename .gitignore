@@ -32,3 +32,6 @@ Thumbs.db
 
 # Configuración local de Claude Code
 .claude/settings.local.json
+
+# Fotos subidas en desarrollo (la API las guarda en disco)
+apps/api/uploads/
