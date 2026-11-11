@@ -42,8 +42,36 @@ Detalle completo en `docs/arquitectura.md` y `docs/modelo-de-datos.md`.
   - `packages/shared`: tipos, enums de estatus, cálculo de la comanda (IVA) y reglas de contraseña.
 - La API **recalcula** precios y totales con la BD; nunca confía en los totales que manda el cliente.
 - Tiempo real: el socket solo avisa (salas por sucursal y por comanda); la fuente de verdad es REST.
-- Estados de comanda: `PENDIENTE` → `PAGADA` → `EN_COCINA` → `LISTA` → `ENTREGADA` (o `CANCELADA`).
+- Estados de comanda (`OrderStatus`): `PENDING` → `PAID` → `IN_KITCHEN` → `READY` → `DELIVERED` (o `CANCELLED`).
 - Por confirmar: proveedores de despliegue y de fotos, y si se agrega Turborepo.
+
+## Convenciones
+
+- **Idioma:** código, base de datos, rutas REST, variables de entorno y git en **inglés**. Textos de la UI y documentación en **español**.
+- **Ramas:** `feat/`, `fix/`, `chore/`, `docs/` + nombre corto en kebab-case (ej. `feat/admin-catalogs`). Nada se sube directo a `main`.
+- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) en inglés: `tipo(alcance): descripción` (ej. `feat(api): add branch search`).
+- **Glosario** (dominio en español → código en inglés; tabla completa en `docs/modelo-de-datos.md`):
+
+| Español | Código |
+|---|---|
+| Sucursal | `Branch` |
+| Usuario (empleado) | `Employee` |
+| Categoría | `Category` |
+| Alimento / Bebida | `Food` / `Drink` |
+| Combo | `Combo` |
+| Cliente | `Customer` |
+| Medio de pago | `PaymentMethod` |
+| Comanda / Detalle | `Order` / `OrderItem` |
+| Pago | `Payment` |
+| Gasto de marketing | `MarketingExpense` |
+| Calificación | `Rating` |
+| Turno / Token QR | `ticketNumber` / `qrToken` |
+| Estatus activo / baja | `ACTIVE` / `INACTIVE` |
+| Canal kiosko / drive thru | `KIOSK` / `DRIVE_THRU` |
+| Roles administrador / cocina | `ADMIN` / `KITCHEN` |
+| Estados de comanda | `PENDING`, `PAID`, `IN_KITCHEN`, `READY`, `DELIVERED`, `CANCELLED` |
+
+- **Rutas REST** en plural y kebab-case: `/api/branches`, `/api/foods`, `/api/employees/:id/password`. Rutas públicas con `@Public()`.
 
 ## Stack de front end
 
