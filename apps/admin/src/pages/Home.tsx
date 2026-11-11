@@ -13,7 +13,7 @@ export function Home() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="font-heading text-4xl font-bold tracking-tight">
+        <h1 className="font-heading text-4xl">
           {greeting()}, {employee?.username}
         </h1>
         <p className="text-muted-foreground">¿Qué catálogo quieres revisar hoy?</p>
@@ -27,10 +27,10 @@ export function Home() {
             transition={{ duration: 0.2, delay: i * 0.04 }}
           >
             <Link to={path} className="group block rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring">
-              <Card className="h-full transition-shadow group-hover:shadow-tarjeta">
+              <Card className="h-full transition-shadow group-hover:ring-2 group-hover:ring-tinta">
                 <CardHeader>
-                  <span className="mb-2 grid size-12 place-items-center rounded-lg bg-chile-tinte text-chile">
-                    <IconComponent size={28} weight="duotone" />
+                  <span className="mb-2 grid size-12 place-items-center rounded-sm border-2 border-tinta bg-papel">
+                    <IconComponent size={28} />
                   </span>
                   <CardTitle className="flex items-center justify-between font-heading text-xl">
                     {label}

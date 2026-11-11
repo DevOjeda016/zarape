@@ -151,7 +151,7 @@ export function PhotoField({
           {value ? (
             <img src={photoSrc(value)} alt={alt} className="size-full object-cover" />
           ) : (
-            <CameraIcon size={28} weight="duotone" className="text-muted-foreground" aria-hidden />
+            <CameraIcon size={28} className="text-muted-foreground" aria-hidden />
           )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">

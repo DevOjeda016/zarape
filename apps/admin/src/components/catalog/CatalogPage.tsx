@@ -44,10 +44,10 @@ export function CatalogPage(props: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Encabezado impreso */}
-      <header className="hidden items-center gap-4 border-b-4 border-double border-chile pb-3 print:flex">
+      <header className="hidden items-center gap-4 border-b-4 border-double border-tinta pb-3 print:flex">
         <img src="/jarro.svg" alt="" className="size-12" />
         <div className="flex flex-1 flex-col">
-          <p className="font-heading text-xl font-extrabold">El Zarape · {title}</p>
+          <p className="font-heading text-xl">El Zarape · {title}</p>
           <p className="text-sm">
             {props.filterSummary} · {total} {total === 1 ? 'registro' : 'registros'}
           </p>
@@ -61,11 +61,11 @@ export function CatalogPage(props: Props) {
 
       <div className="flex flex-wrap items-end justify-between gap-4 print:hidden">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-lg bg-chile-tinte text-chile">
-            <IconComponent size={24} weight="duotone" />
+          <span className="grid size-11 place-items-center rounded-sm border-2 border-tinta bg-papel">
+            <IconComponent size={24} />
           </span>
           <div>
-            <h1 className="font-heading text-3xl font-bold tracking-tight">{title}</h1>
+            <h1 className="font-heading text-3xl">{title}</h1>
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>
         </div>

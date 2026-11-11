@@ -208,7 +208,7 @@ export function Combos() {
             className: 'text-right',
             cell: (c) =>
               c.savings > 0 ? (
-                <Badge variant="outline" className="border-transparent bg-chile-tinte text-chile tabular-nums">
+                <Badge variant="outline" className="border-transparent bg-rosa text-tinta tabular-nums">
                   {formatPrice(c.savings)}
                 </Badge>
               ) : (

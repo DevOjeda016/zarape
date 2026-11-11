@@ -70,8 +70,8 @@ export function RowActions({
         </Tooltip>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogMedia className="bg-chile-tinte text-chile">
-              <TrashIcon weight="duotone" />
+            <AlertDialogMedia className="bg-destructive/10 text-destructive">
+              <TrashIcon />
             </AlertDialogMedia>
             <AlertDialogTitle>¿Eliminar {label}?</AlertDialogTitle>
             <AlertDialogDescription>

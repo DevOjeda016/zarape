@@ -11,7 +11,7 @@ export function Forbidden() {
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <LockKeyIcon weight="duotone" />
+            <LockKeyIcon />
           </EmptyMedia>
           <EmptyTitle>Esta sección es solo para administración</EmptyTitle>
           <EmptyDescription>

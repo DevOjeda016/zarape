@@ -8,7 +8,7 @@ export function NotFound() {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <MapTrifoldIcon weight="duotone" />
+          <MapTrifoldIcon />
         </EmptyMedia>
         <EmptyTitle>No encontramos esta página</EmptyTitle>
         <EmptyDescription>Revisa la dirección o vuelve al inicio.</EmptyDescription>

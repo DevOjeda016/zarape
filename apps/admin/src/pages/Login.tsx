@@ -12,9 +12,9 @@ import { useAuth } from '@/auth/session';
 import { ApiError } from '@/lib/api';
 
 /** Franjas del zarape (de arriba abajo): detalle de marca, nunca fondo de texto. */
-const ZARAPE_STRIPES = ['bg-rosa', 'bg-cempasuchil', 'bg-masa', 'bg-talavera', 'bg-masa', 'bg-nopal', 'bg-rosa'];
+const ZARAPE_STRIPES = ['bg-chile', 'bg-maiz', 'bg-carta', 'bg-jarra', 'bg-carta', 'bg-nopal', 'bg-rosa', 'bg-maiz', 'bg-chile'];
 
-/** RF01: acceso con privilegios de empleado. */
+/** RF01: acceso con privilegios de empleado. La carta de la casa y el formulario, sobre la mesa. */
 export function Login() {
   const { employee, login } = useAuth();
   const navigate = useNavigate();
@@ -44,20 +44,21 @@ export function Login() {
   }
 
   return (
-    <main className="grid min-h-svh place-items-center bg-background p-4">
+    <main data-theme="mesa" className="grid min-h-svh place-items-center bg-background p-4 text-foreground">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
         className="flex w-full max-w-sm flex-col items-center gap-6"
       >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <img src="/jarro.svg" alt="" width={96} height={96} className="size-24" />
-          <h1 className="font-heading text-4xl font-extrabold tracking-tight">El Zarape</h1>
-          <p className="font-medium text-muted-foreground">Sabor mexicano a tu ritmo.</p>
+        <div className="flex flex-col items-center gap-4 text-center">
+          <h1>
+            <img src="/carta.svg" alt="El Zarape" width={130} height={200} className="h-50 w-auto -rotate-3 rounded-carta shadow-carta" />
+          </h1>
+          <p className="font-heading text-xl">Sabor mexicano a tu ritmo.</p>
         </div>
 
-        <Card className="w-full overflow-hidden pt-0">
+        <Card data-theme="papel" className="w-full overflow-hidden pt-0 shadow-carta">
           <div className="flex flex-col" aria-hidden>
             {ZARAPE_STRIPES.map((color, i) => (
               <span key={i} className={`h-1 ${color}`} />

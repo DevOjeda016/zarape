@@ -221,7 +221,7 @@ Reglas:
 
 | App | Tema | Carácter |
 |---|---|---|
-| I. Gestión (intranet) | Papel, barra lateral mesa | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. Ultra solo en títulos. |
+| I. Gestión (intranet) | Papel, barra lateral mesa | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. Ultra solo en títulos. El elemento activo del menú va en `maiz` con texto `tinta`. El login es la excepción: la carta de la casa y el formulario (papel) sobre la mesa. |
 | II. Kiosko en sitio | Mesa | Cartas grandes sobre la mesa: fotos protagonistas, botones de 56 px, ticket papel siempre visible a la derecha. |
 | II. Cocina y turnos | Mesa | Alto contraste a distancia: columnas por estado, números de turno de 120 px en cartas, alerta con sonido + volteo de la carta. |
 | III. Drive thru (móvil) | Mesa | Una mano: barra inferior con Perfil · Ordenar · Revisar pedido; el QR va en una carta grande con brillo al máximo. |

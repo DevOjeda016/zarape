@@ -21,13 +21,16 @@ import { NavLink, Outlet, useLocation } from 'react-router';
 import { useAuth } from '@/auth/session';
 import { CATALOG_MENU, type MenuItem, SUPPORT_MENU } from './menu';
 
+/** Elemento activo: maíz con tinta, como la carta elegida sobre la mesa. */
+const ACTIVE = "data-[active=true]:bg-maiz! data-[active=true]:text-tinta!";
+
 function NavItem({ item }: { item: MenuItem }) {
   const { pathname } = useLocation();
   const active = pathname.startsWith(item.path);
   const IconComponent = item.icon;
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={active} tooltip={item.label} size="lg">
+      <SidebarMenuButton asChild isActive={active} tooltip={item.label} size="lg" className={ACTIVE}>
         <NavLink to={item.path}>
           <IconComponent weight={active ? 'fill' : 'regular'} />
           <span>{item.label}</span>
@@ -37,7 +40,7 @@ function NavItem({ item }: { item: MenuItem }) {
   );
 }
 
-/** Marco de la intranet (AppShell): barra lateral (barro) + contenido con transición de pantalla. */
+/** Marco de la intranet (AppShell): barra lateral (mesa) + contenido con transición de pantalla. */
 export function AppShell() {
   const { employee, logout } = useAuth();
   const { pathname } = useLocation();
@@ -47,10 +50,10 @@ export function AppShell() {
       <Sidebar collapsible="icon" className="print:hidden">
         <SidebarHeader>
           <NavLink to="/" className="flex items-center gap-2 rounded-lg p-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <img src="/jarro.svg" alt="" className="size-9 shrink-0" />
+            <img src="/isotipo.svg" alt="" className="size-9 shrink-0" />
             <span className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
-              <span className="font-heading text-lg font-extrabold">El Zarape</span>
-              <span className="text-xs text-muted-foreground">Gestión</span>
+              <span className="font-heading text-lg">El Zarape</span>
+              <span className="text-xs text-sidebar-foreground/75">Gestión</span>
             </span>
           </NavLink>
         </SidebarHeader>
@@ -59,7 +62,7 @@ export function AppShell() {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={pathname === '/'} tooltip="Inicio" size="lg">
+                  <SidebarMenuButton asChild isActive={pathname === '/'} tooltip="Inicio" size="lg" className={ACTIVE}>
                     <NavLink to="/" end>
                       <HouseIcon weight={pathname === '/' ? 'fill' : 'regular'} />
                       <span>Inicio</span>

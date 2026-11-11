@@ -40,7 +40,7 @@ export function CatalogTable<T extends { id: number }>({ columns, rows, loading,
       <Empty className="border">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <MagnifyingGlassIcon weight="duotone" />
+            <MagnifyingGlassIcon />
           </EmptyMedia>
           <EmptyTitle>Sin resultados</EmptyTitle>
           <EmptyDescription>{emptyMessage}</EmptyDescription>
