@@ -183,7 +183,7 @@ Requisitos: Node 24 (mínimo 22.12, ver `.nvmrc`) y pnpm 12 (`npm i -g pnpm@12`)
 | `pnpm typecheck` | Revisa los tipos de cada paquete. |
 | `pnpm --filter @zarape/<app> preview` | Sirve el build de una app (puertos 4173–4175). |
 
-Puertos en desarrollo: API `3000` (Swagger en `/api/docs`, salud en `/api/salud`), admin `5173`, pos `5174`, drive-thru `5175`.
+Puertos en desarrollo: API `3000` (Swagger en `/api/docs`, salud en `/api/health`), admin `5173`, pos `5174`, drive-thru `5175`.
 
 API y base de datos (`apps/api`):
 

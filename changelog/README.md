@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-10 | [010-ruta-health](2026-11-10-010-ruta-health.md) | `CLAUDE.md`: la salud de la API está en `/api/health` (ya no `/api/salud`). |
 | 2026-11-10 | [009-gestion-con-loteria](2026-11-10-009-gestion-con-loteria.md) | Pantallas de Gestión pasadas a los tokens de Lotería (login sobre la mesa, menú activo en maíz, estados y combos). |
 | 2026-11-10 | [008-identidad-loteria](2026-11-10-008-identidad-loteria.md) | Identidad nueva "Lotería": carta número 1 con jarrito y zarape, temas papel y mesa, Ultra + Libre Franklin. |
 | 2026-11-10 | [007-skill-frontend-design](2026-11-10-007-skill-frontend-design.md) | Skill oficial `frontend-design` de Anthropic para que el diseño salga con carácter y no genérico. |
