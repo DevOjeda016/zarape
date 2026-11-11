@@ -12,6 +12,7 @@ Skills y servidores MCP **oficiales** de las herramientas del stack, instalados 
 
 | Skill | Fuente (commit fijado) | Licencia |
 |---|---|---|
+| `frontend-design` | [anthropics/skills](https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579/skills/frontend-design) `skills/frontend-design` @ `2c5958e` | Apache-2.0 |
 | `shadcn` | [shadcn-ui/ui](https://github.com/shadcn-ui/ui/tree/8ab27715521cbd4f87ae6886cd989cbb678f6de7/skills/shadcn) `skills/shadcn` @ `8ab2771` | MIT |
 | `prisma-cli`, `prisma-client-api`, `prisma-orm-setup` | [prisma/skills](https://github.com/prisma/skills/tree/8ea289b730c2e89f7ff1f518af128b113d842a92) @ `8ea289b` | MIT |
 | `motion` | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit/tree/1e424943582cbbdb6e3f410687e39f96451447bb/plugins/motion/skills/motion) `plugins/motion/skills/motion` @ `1e42494` | MIT (según su `package.json`) |

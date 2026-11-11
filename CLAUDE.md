@@ -168,7 +168,7 @@ Componentes de shadcn: `pnpm --filter @zarape/ui exec shadcn add <componente>` (
 
 Solo oficiales, fijadas por versión o commit. Fuentes, licencias y cómo actualizarlas: `.claude/README.md`.
 
-- **Skills** (`.claude/skills/`): `shadcn` (CLI, reglas de composición y theming; usa el shadcn del repo), `prisma-cli`, `prisma-client-api` y `prisma-orm-setup` (Prisma 7), `motion` (buenas prácticas de animación), y `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp` y `troubleshooting` (Chrome DevTools).
+- **Skills** (`.claude/skills/`): `frontend-design` (Anthropic: dirección visual con carácter, evita diseños genéricos; usarla antes de diseñar pantallas o identidad), `shadcn` (CLI, reglas de composición y theming; usa el shadcn del repo), `prisma-cli`, `prisma-client-api` y `prisma-orm-setup` (Prisma 7), `motion` (buenas prácticas de animación), y `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp` y `troubleshooting` (Chrome DevTools).
 - **MCP** (`.mcp.json`; cada quien los aprueba la primera vez): `shadcn` (registro de componentes), `chrome-devtools` (Lighthouse, accesibilidad y rendimiento en Chrome), `motion` (docs y ejemplos de Motion) y `prisma` (estado y creación de migraciones, Studio).
 - Sin nada oficial para Claude: Tailwind CSS, Socket.IO, Phosphor, pnpm, NestJS, React, Vite, vite-plugin-pwa, Vitest y oxlint. De esas, publican `llms.txt` (docs para IA): [React](https://react.dev/llms.txt), [Vite](https://vite.dev/llms.txt), [vite-plugin-pwa](https://vite-pwa-org.netlify.app/llms.txt), [NestJS](https://docs.nestjs.com/llms.txt), [Vitest](https://vitest.dev/llms.txt) y [oxc](https://oxc.rs/llms.txt).
 
