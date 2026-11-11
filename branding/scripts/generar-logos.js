@@ -1,79 +1,120 @@
-// Genera las variantes del isotipo "jarro envuelto en zarape" desde una sola geometría.
-// Módulo ES: el package.json de la raíz declara "type": "module".
+// Genera los logos de El Zarape (dirección "Lotería") desde una sola geometría.
+// Uso: node branding/scripts/generar-logos.js branding/logos
+// El título de la carta se convierte a curvas con la fuente Ultra de packages/ui
+// (corre `pnpm install` antes), así los SVG se ven igual como <img>, favicon o ícono PWA.
 import fs from 'node:fs';
 import path from 'node:path';
+import opentype from 'opentype.js';
 
 const out = process.argv[2];
+if (!out) throw new Error('Falta la carpeta de salida: node branding/scripts/generar-logos.js branding/logos');
 
-const BODY = 'M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z';
-const stripe = (y, h) => `M16 ${y}Q58 ${y + 6} 100 ${y}V${y + h}Q58 ${y + h + 6} 16 ${y + h}Z`;
-const STRIPES = [
-  ['crema', 60, 2],
-  ['rosa', 62, 5],
-  ['cemp', 67, 4],
-  ['tala', 71, 5],
-  ['crema', 76, 2],
-];
-const fringeX = [];
-for (let x = 34; x <= 82; x += 4) fringeX.push(x);
-const sag = (x) => 3 * (1 - ((x - 58) / 42) ** 2);
-const fringe = fringeX
-  .map((x) => { const y = +(78 + sag(x)).toFixed(1); return `<line x1="${x}" y1="${(y + 0.8).toFixed(1)}" x2="${x}" y2="${(y + 5.5).toFixed(1)}"/>`; })
-  .join('');
-const STEAM = '<path d="M48 26c-4-4 4-7 0-12"/><path d="M58 24c-4-4 4-7 0-12"/><path d="M68 26c-4-4 4-7 0-12"/>';
-// Los dos extremos del asa quedan dentro del cuerpo (contando el radio del trazo) para que no asomen.
-const HANDLE = 'M75 51C99 44 103 72 82 78';
+const FUENTE = 'packages/ui/node_modules/@fontsource/ultra/files/ultra-latin-400-normal.woff';
+if (!fs.existsSync(FUENTE)) throw new Error(`No se encontró ${FUENTE}. Corre pnpm install en la raíz.`);
+const ultra = opentype.parse(new Uint8Array(fs.readFileSync(FUENTE)).buffer);
 
-const style = (v, r) => `<style>
-.${r} .zr-fondo{fill:var(--logo-fondo,${v.fondo})}
-.${r} .zr-jarro{fill:var(--logo-jarro,${v.jarro})}
-.${r} .zr-asa{fill:none;stroke:var(--logo-jarro,${v.jarro});stroke-width:7;stroke-linecap:round}
-.${r} .zr-boca{fill:var(--logo-boca,${v.boca})}
-.${r} .zr-vapor{fill:none;stroke:var(--logo-vapor,${v.vapor});stroke-width:3;stroke-linecap:round}
-.${r} .zr-crema{fill:#FFF8EF}.${r} .zr-rosa{fill:#C2185B}.${r} .zr-cemp{fill:#F4A019}.${r} .zr-tala{fill:#1F5FA8}
-.${r} .zr-fleco{stroke:#FFF8EF;stroke-width:1.6;stroke-linecap:round}
-</style>`;
-
-const art = (id) => `<g transform="translate(-3 4)">
-<g class="zr-vapor">${STEAM}</g>
-<path class="zr-asa" d="${HANDLE}"/>
-<path class="zr-jarro" d="${BODY}"/>
-<g clip-path="url(#${id})">${STRIPES.map(([c, y, h]) => `<path class="zr-${c}" d="${stripe(y, h)}"/>`).join('')}<g class="zr-fleco">${fringe}</g></g>
-<ellipse class="zr-jarro" cx="58" cy="36" rx="25" ry="5"/>
-<ellipse class="zr-boca" cx="58" cy="36" rx="20.5" ry="3.2"/>
-</g>`;
-
-const clip = (id) => `<clipPath id="${id}"><path d="${BODY}"/></clipPath>`;
-const svg = (body, r = "") => `<svg xmlns="http://www.w3.org/2000/svg"${r ? ` class="${r}"` : ""} viewBox="0 0 120 120" role="img" aria-label="El Zarape">\n${body}\n</svg>\n`;
-
-const CLARO = { fondo: '#FFF8EF', jarro: '#B4532A', boca: '#5E2A14', vapor: '#B3261E' };
-const OSCURO = { fondo: '#2B1810', jarro: '#C8633A', boca: '#4A200E', vapor: '#F4A019' };
-
-const files = {
-  'jarro.svg': svg(`${style(CLARO, 'zr-l-jarro')}<defs>${clip('zr-c-jarro')}</defs>\n${art('zr-c-jarro')}`, 'zr-l-jarro'),
-  'isotipo.svg': svg(`${style(CLARO, 'zr-l-iso')}<defs>${clip('zr-c-iso')}</defs>\n<rect class="zr-fondo" width="120" height="120" rx="28"/>\n${art('zr-c-iso')}`, 'zr-l-iso'),
-  'isotipo-oscuro.svg': svg(`${style(OSCURO, 'zr-l-isoo')}<defs>${clip('zr-c-isoo')}</defs>\n<rect class="zr-fondo" width="120" height="120" rx="28"/>\n${art('zr-c-isoo')}`, 'zr-l-isoo'),
-  'isotipo-maskable.svg': svg(`${style(CLARO, 'zr-l-mask')}<defs>${clip('zr-c-mask')}</defs>\n<rect class="zr-fondo" width="120" height="120"/>\n<g transform="translate(12 12) scale(0.8)">${art('zr-c-mask')}</g>`, 'zr-l-mask'),
+// Colores fijos de la marca (branding/tokens.css). No cambian con el tema.
+const C = {
+  mesa: '#12402E',
+  carta: '#FFFBF0',
+  tinta: '#000000',
+  chile: '#C8102E',
+  maiz: '#F2B705',
+  jarra: '#1F4FA0',
+  nopal: '#1E7A46',
+  rosa: '#E0457B',
+  barro: '#B5562B',
+  boca: '#5E2A14',
 };
 
-// Una tinta: todo en currentColor; la franja, los flecos y la boca se recortan con una máscara.
-const monoMask = `<mask id="zr-m-mono" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
-<rect width="120" height="120" fill="#fff"/>
-<path d="${stripe(60, 2)}" fill="#000"/><path d="${stripe(66.5, 1.5)}" fill="#000"/><path d="${stripe(71, 1.5)}" fill="#000"/><path d="${stripe(76, 2)}" fill="#000"/>
-<g stroke="#000" stroke-width="1.6" stroke-linecap="round">${fringe}</g>
-<ellipse cx="58" cy="36" rx="20.5" ry="3.2" fill="#000"/>
-</mask>`;
-// El asa se oculta dentro del cuerpo: si no, se asoma por los huecos de la franja y parece encimada.
-const asaMask = `<mask id="zr-m-asa" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
-<rect width="120" height="120" fill="#fff"/>
-<path d="${BODY}" fill="#000"/>
-</mask>`;
-files['jarro-mono.svg'] = svg(`<defs>${monoMask}${asaMask}</defs>
-<g transform="translate(-3 4)" fill="currentColor" stroke="currentColor">
-<g fill="none" stroke-width="3" stroke-linecap="round">${STEAM}</g>
-<path d="${HANDLE}" fill="none" stroke-width="7" stroke-linecap="round" mask="url(#zr-m-asa)"/>
-<g mask="url(#zr-m-mono)" stroke="none"><path d="${BODY}"/><ellipse cx="58" cy="36" rx="25" ry="5"/></g>
+// --- Dibujo: zarape colgado de una vara y un jarro de barro al frente (caja de 220 × 220) ---
+const ZARAPE = 'M28 30H192V160Q150 172 110 160Q70 148 28 162Z';
+const JARRO = 'M78 130Q70 122 82 118H138Q150 122 142 130Q168 152 156 186Q148 206 110 206Q72 206 64 186Q52 152 78 130Z';
+const ASA = 'M152 142Q182 140 174 168Q168 182 152 178';
+// Franjas de arriba abajo: [color, y, alto]. El orden es la firma de la marca: no se cambia.
+const FRANJAS = [
+  ['chile', 30, 18], ['maiz', 48, 14], ['carta', 62, 8], ['jarra', 70, 16], ['carta', 86, 8],
+  ['nopal', 94, 14], ['rosa', 108, 16], ['maiz', 124, 14], ['chile', 138, 40],
+];
+// Flecos: siguen la orilla de abajo del zarape; los del centro quedan detrás del jarro.
+const orilla = (x) => (x <= 110 ? (t => (1 - t) ** 2 * 162 + 2 * (1 - t) * t * 148 + t * t * 160)((x - 28) / 82) : (t => (1 - t) ** 2 * 160 + 2 * (1 - t) * t * 172 + t * t * 160)((x - 110) / 82));
+const FLECOS = [34, 46, 58, 70, 150, 162, 174, 186].map((x) => `M${x} ${orilla(x).toFixed(1)}v12`).join('');
+
+function dibujo(id, k = 1) {
+  // k engruesa los trazos para tamaños chicos (ícono)
+  const w = (n) => +(n * k).toFixed(2);
+  return `<defs><clipPath id="${id}"><path d="${ZARAPE}"/></clipPath></defs>
+<g clip-path="url(#${id})">${FRANJAS.map(([c, y, h]) => `<rect x="20" y="${y}" width="180" height="${h}" fill="${C[c]}"/>`).join('')}</g>
+<path d="${ZARAPE}" fill="none" stroke="${C.tinta}" stroke-width="${w(4)}" stroke-linejoin="round"/>
+<path d="${FLECOS}" stroke="${C.tinta}" stroke-width="${w(3)}" stroke-linecap="round"/>
+<path d="M18 30H202" stroke="${C.tinta}" stroke-width="${w(7)}" stroke-linecap="round"/>
+<path d="${ASA}" fill="none" stroke="${C.tinta}" stroke-width="${w(12)}" stroke-linecap="round"/>
+<path d="${ASA}" fill="none" stroke="${C.barro}" stroke-width="${w(5)}" stroke-linecap="round"/>
+<path d="${JARRO}" fill="${C.barro}" stroke="${C.tinta}" stroke-width="${w(4)}" stroke-linejoin="round"/>
+<path d="M66 164Q110 178 154 164" fill="none" stroke="${C.carta}" stroke-width="${w(4)}"/>
+<circle cx="88" cy="184" r="${w(3)}" fill="${C.carta}"/><circle cx="110" cy="188" r="${w(3)}" fill="${C.carta}"/><circle cx="132" cy="184" r="${w(3)}" fill="${C.carta}"/>
+<ellipse cx="110" cy="122" rx="30" ry="7" fill="${C.boca}" stroke="${C.tinta}" stroke-width="${w(3.5)}"/>`;
+}
+
+// Texto de Ultra convertido a curvas, centrado en cx y ajustado a un ancho máximo.
+function texto(t, cx, base, size, maxW) {
+  const s = Math.min(size, (size * maxW) / ultra.getAdvanceWidth(t, size));
+  const x = cx - ultra.getAdvanceWidth(t, s) / 2;
+  return `<path d="${ultra.getPath(t, x, base, s).toPathData(2)}" fill="${C.tinta}"/>`;
+}
+
+const svg = (vb, body, label = 'El Zarape') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" role="img" aria-label="${label}">\n${body}\n</svg>\n`;
+
+// --- Carta completa: el logo principal (número 1, dibujo y título) ---
+const carta = svg('0 0 260 400', `<rect x="2" y="2" width="256" height="396" rx="8" fill="${C.carta}" stroke="${C.tinta}" stroke-width="4"/>
+<rect x="14" y="14" width="232" height="372" rx="3" fill="none" stroke="${C.tinta}" stroke-width="3"/>
+<rect x="22" y="22" width="34" height="38" fill="none" stroke="${C.tinta}" stroke-width="2.5"/>
+${texto('1', 39, 51, 28, 24)}
+<g transform="translate(3.5 45.5) scale(1.15)">${dibujo('zr-carta')}</g>
+${texto('EL ZARAPE', 130, 356, 40, 204)}`);
+
+// --- Ícono: la carta inclinada sobre la mesa verde (sin título: a tamaño de ícono no se lee) ---
+const cartaIcono = (id) => `<g transform="rotate(-6)">
+<rect x="-36" y="-50" width="72" height="100" rx="3" fill="${C.carta}" stroke="${C.tinta}" stroke-width="3"/>
+<rect x="-31" y="-45" width="62" height="90" fill="none" stroke="${C.tinta}" stroke-width="1.8"/>
+<g transform="translate(-34.7 -38) scale(0.315)">${dibujo(id, 1.6)}</g>
+</g>`;
+
+const files = {
+  'carta.svg': carta,
+  'jarro.svg': svg('0 0 220 220', dibujo('zr-jarro')),
+  'isotipo.svg': svg('0 0 120 120', `<rect width="120" height="120" rx="26" fill="${C.mesa}"/>\n<g transform="translate(60 60)">${cartaIcono('zr-iso')}</g>`),
+  // Maskable: fondo a sangre y la carta dentro de la zona segura (círculo del 80 %)
+  'isotipo-maskable.svg': svg('0 0 120 120', `<rect width="120" height="120" fill="${C.mesa}"/>\n<g transform="translate(60 60) scale(0.76)">${cartaIcono('zr-mask')}</g>`),
+};
+
+// --- Una tinta (currentColor): tickets impresos y sellos. Franjas alternas rellenas, jarro sólido. ---
+const MONO_LLENAS = FRANJAS.filter((_, i) => i % 2 === 0);
+files['jarro-mono.svg'] = svg('0 0 220 220', `<defs><clipPath id="zr-mono"><path d="${ZARAPE}"/></clipPath>
+<mask id="zr-mono-jarro" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="220">
+<rect width="220" height="220" fill="#fff"/>
+<path d="M66 164Q110 178 154 164" fill="none" stroke="#000" stroke-width="4"/>
+<circle cx="88" cy="184" r="3" fill="#000"/><circle cx="110" cy="188" r="3" fill="#000"/><circle cx="132" cy="184" r="3" fill="#000"/>
+<ellipse cx="110" cy="122" rx="24" ry="3.5" fill="#000"/>
+</mask>
+<mask id="zr-mono-hueco" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="220">
+<rect width="220" height="220" fill="#fff"/>
+<path d="${JARRO}" stroke="#000" stroke-width="12" stroke-linejoin="round"/>
+<ellipse cx="110" cy="122" rx="32" ry="9" stroke="#000" stroke-width="12"/>
+<path d="${ASA}" fill="none" stroke="#000" stroke-width="22" stroke-linecap="round"/>
+</mask></defs>
+<g fill="currentColor" stroke="currentColor">
+<g mask="url(#zr-mono-hueco)">
+<g clip-path="url(#zr-mono)" stroke="none">${MONO_LLENAS.map(([, y, h]) => `<rect x="20" y="${y}" width="180" height="${h}"/>`).join('')}</g>
+<path d="${ZARAPE}" fill="none" stroke-width="4" stroke-linejoin="round"/>
+<path d="${FLECOS}" stroke-width="3" stroke-linecap="round"/>
+</g>
+<path d="M18 30H202" stroke-width="7" stroke-linecap="round"/>
+<path d="${ASA}" fill="none" stroke-width="10" stroke-linecap="round"/>
+<g mask="url(#zr-mono-jarro)" stroke="none"><path d="${JARRO}"/><ellipse cx="110" cy="122" rx="32" ry="9"/></g>
 </g>`);
 
+fs.mkdirSync(out, { recursive: true });
 for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(out, name), text);
 console.log(Object.keys(files).join('\n'));

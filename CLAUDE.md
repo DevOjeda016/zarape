@@ -78,7 +78,7 @@ Detalle completo en `docs/arquitectura.md` y `docs/modelo-de-datos.md`.
 - **React + Vite**, componentes funcionales y hooks.
 - **shadcn/ui** + **Tailwind CSS v4** en `packages/ui`, con las variables de shadcn conectadas a los tokens de marca (tabla en `branding/README.md`).
 - **Motion** (`motion/react`) para animaciones; reglas de movimiento en `branding/README.md`. Siempre `MotionConfig reducedMotion="user"`.
-- Íconos: **Phosphor** (`@phosphor-icons/react`) como `iconLibrary` de shadcn; pesos regular / fill (activo) / duotone (kiosko). Detalle en `branding/README.md`.
+- Íconos: **Phosphor** (`@phosphor-icons/react`) como `iconLibrary` de shadcn; pesos regular (gestión) / bold (kiosko, drive thru, cocina) / fill (activo). Detalle en `branding/README.md`.
 - Extras: Sonner, Drawer (Vaul), shadcn Charts para el dashboard, Magic UI solo donde sume. Sin GSAP: Motion cubre las animaciones.
 - **vite-plugin-pwa** (Workbox) para manifest y service worker.
 - Rutas del lado del cliente con **rutas protegidas por rol**.
@@ -140,19 +140,20 @@ Detalle completo en `docs/arquitectura.md` y `docs/modelo-de-datos.md`.
 
 ## PWA
 
-- Manifest por app: nombre, nombre corto, íconos (`branding/logos/isotipo.svg` y `isotipo-maskable.svg`), `theme_color` `#B3261E`, `display: standalone`.
+- Manifest por app: nombre, nombre corto, íconos (`branding/logos/isotipo.svg` y `isotipo-maskable.svg`), `theme_color` `#12402E` (mesa), `display: standalone`.
 - Service worker: precache del shell; **stale-while-revalidate** para el menú (consulta sin conexión); **network-first** para comandas y pagos (sin red, avisar claro, no mostrar datos viejos).
 - Aviso propio de instalación (Android) e instrucciones para iOS/Safari; aviso de nueva versión.
-- Fuentes autoalojadas (`@fontsource-variable/*`) para que funcionen sin conexión.
+- Fuentes autoalojadas (`@fontsource/ultra`, `@fontsource-variable/libre-franklin`) para que funcionen sin conexión.
 - **HTTPS obligatorio** en todo despliegue, incluida la intranet.
 - Meta: **Lighthouse ≥ 90** en rendimiento y accesibilidad.
 
 ## Identidad visual (`branding/`)
 
-- Guía completa: `branding/README.md`. Variables CSS: `branding/tokens.css`. Isotipos: `branding/logos/`.
-- Sistema de marca interactivo: https://claude.ai/artifact/MBmLHKVu9Q878MttpVD6VQ
-- Isotipo: **jarrito de barro envuelto en zarape con flecos** (`branding/logos/`). Variantes: `jarro`, `isotipo` (claro), `isotipo-oscuro`, `isotipo-maskable` y `jarro-mono` (`currentColor`). Se adapta al tema con las variables `--logo-*` de `branding/tokens.css`.
-- Resumen: color principal `chile` `#B3261E`, fondo `masa` `#FFF8EF`, texto `cafe` `#2B1810`; acentos del zarape (rosa, cempasúchil, talavera, nopal). Tipografías **Bricolage Grotesque** (display) e **Inter** (interfaz). Slogan: "Sabor mexicano a tu ritmo."
+- Guía completa: `branding/README.md`. Variables CSS: `branding/tokens.css`. Logos: `branding/logos/` (se generan con `branding/scripts/generar-logos.js`).
+- Dirección **Lotería**: cada platillo es una carta (marco negro doble, precio en el recuadro del número, nombre en mayúsculas al pie) sobre la mesa verde; cuando el pedido está listo se canta "¡Lotería!". Exploración: https://claude.ai/artifact/8sdxUrvWNYTEz3d4rGBmF9
+- Logo: **la carta número 1**, un jarrito de barro frente a un zarape colgado, con el título "EL ZARAPE". Archivos: `carta` (logo principal), `jarro` (solo el dibujo), `isotipo` (carta sobre la mesa, ícono y favicon), `isotipo-maskable` y `jarro-mono` (`currentColor`).
+- Dos temas: **papel** (claro, predeterminado: gestión, tickets) y **mesa** (`data-theme="mesa"`: kiosko, cocina, turnos, drive thru). Dentro de mesa, cada carta lleva `data-theme="papel"`.
+- Resumen: fijos `mesa` `#12402E`, `carta` `#FFFBF0`, `tinta` `#000000`, `chile` `#C8102E` (acción en papel), `maiz` `#F2B705` (acción en mesa), `jarra`, `nopal`, `rosa`. Tipografías **Ultra** (display, un solo peso) y **Libre Franklin** (interfaz). Slogan: "Sabor mexicano a tu ritmo."
 - Usar siempre los tokens; nada de colores sueltos en el código. Estados de comanda con color + texto + ícono.
 
 ## Fuera de alcance
@@ -200,7 +201,7 @@ Componentes de shadcn: `pnpm --filter @zarape/ui exec shadcn add <componente>` (
 
 Solo oficiales, fijadas por versión o commit. Fuentes, licencias y cómo actualizarlas: `.claude/README.md`.
 
-- **Skills** (`.claude/skills/`): `shadcn` (CLI, reglas de composición y theming; usa el shadcn del repo), `prisma-cli`, `prisma-client-api` y `prisma-orm-setup` (Prisma 7), `motion` (buenas prácticas de animación), y `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp` y `troubleshooting` (Chrome DevTools).
+- **Skills** (`.claude/skills/`): `frontend-design` (Anthropic: dirección visual con carácter, evita diseños genéricos; usarla antes de diseñar pantallas o identidad), `shadcn` (CLI, reglas de composición y theming; usa el shadcn del repo), `prisma-cli`, `prisma-client-api` y `prisma-orm-setup` (Prisma 7), `motion` (buenas prácticas de animación), y `chrome-devtools`, `a11y-debugging`, `debug-optimize-lcp` y `troubleshooting` (Chrome DevTools).
 - **MCP** (`.mcp.json`; cada quien los aprueba la primera vez): `shadcn` (registro de componentes), `chrome-devtools` (Lighthouse, accesibilidad y rendimiento en Chrome), `motion` (docs y ejemplos de Motion) y `prisma` (estado y creación de migraciones, Studio).
 - Sin nada oficial para Claude: Tailwind CSS, Socket.IO, Phosphor, pnpm, NestJS, React, Vite, vite-plugin-pwa, Vitest y oxlint. De esas, publican `llms.txt` (docs para IA): [React](https://react.dev/llms.txt), [Vite](https://vite.dev/llms.txt), [vite-plugin-pwa](https://vite-pwa-org.netlify.app/llms.txt), [NestJS](https://docs.nestjs.com/llms.txt), [Vitest](https://vitest.dev/llms.txt) y [oxc](https://oxc.rs/llms.txt).
 

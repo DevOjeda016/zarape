@@ -33,8 +33,8 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        theme_color: '#B3261E',
-        background_color: '#FFF8EF',
+        theme_color: '#12402E',
+        background_color: '#12402E',
         icons: [
           { src: '/isotipo.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
           { src: '/isotipo-maskable.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },

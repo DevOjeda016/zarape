@@ -1,31 +1,24 @@
-/* El Zarape — tokens de marca. Fuente de verdad: branding/README.md */
-/* Fuentes: npm i @fontsource-variable/bricolage-grotesque @fontsource-variable/inter */
+/* El Zarape — tokens de marca (dirección "Lotería"). Fuente de verdad: branding/README.md */
+/* Fuentes: @fontsource/ultra y @fontsource-variable/libre-franklin (ya en packages/ui) */
 
 :root {
-  /* Color — tema claro */
-  --masa: #fff8ef;
-  --barro: #f3e6d6;
-  --tarjeta: #ffffff;
-  --linea: #e7d5c1;
-  --borde-campo: #9c8573;
-  --cafe: #2b1810;
-  --cafe-suave: #6b5446;
-  --chile: #b3261e;
-  --chile-hover: #8f1d17;
-  --sobre-chile: #ffffff;
-  --rosa: #c2185b;
-  --cempasuchil: #f4a019;
-  --cempasuchil-texto: #8a5a00;
-  --nopal: #2f7a3e;
-  --talavera: #1f5fa8;
-  --chile-tinte: #fbe4e1;
-  --nopal-tinte: #e4f2e6;
-  --talavera-tinte: #e3edf9;
-  --cempasuchil-tinte: #fdf0d5;
+  /* Colores fijos de la marca: no cambian con el tema */
+  --mesa: #12402e;
+  --mesa-alta: #1a4d39;
+  --mesa-linea: #2c5e49;
+  --carta: #fffbf0;
+  --papel: #f3ebd7;
+  --tinta: #000000;
+  --chile: #c8102e;
+  --maiz: #f2b705;
+  --jarra: #1f4fa0;
+  --nopal: #1e7a46;
+  --rosa: #e0457b;
+  --barro: #b5562b;
 
   /* Tipografía */
-  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
-  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Ultra", "Rockwell Extra Bold", Georgia, serif;
+  --font-sans: "Libre Franklin Variable", "Libre Franklin", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Espacio (base 4 px) */
   --space-1: 4px;
@@ -36,55 +29,61 @@
   --space-8: 32px;
   --space-12: 48px;
 
-  /* Esquinas */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Esquinas y marcos */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-carta: 8px;
   --radius-pill: 999px;
+  --marco: 3px;
 
   /* Áreas táctiles */
   --touch-min: 44px;
   --touch-kiosko: 56px;
+}
 
-  /* Sombra */
-  --sombra-tarjeta: 0 1px 2px rgba(43, 24, 16, 0.08), 0 4px 12px rgba(43, 24, 16, 0.06);
-
-  /* Logo (jarro envuelto en zarape) */
-  --logo-fondo: #fff8ef;
-  --logo-jarro: #b4532a;
-  --logo-boca: #5e2a14;
-  --logo-vapor: #b3261e;
+/* Tema papel (claro, el predeterminado): gestión, tickets impresos y todo lo que va sobre una carta.
+   Dentro de una sección mesa, data-theme="papel" lo recupera (una carta, el ticket). */
+:root,
+[data-theme="papel"] {
+  --fondo: var(--carta);
+  --fondo-alterno: var(--papel);
+  --superficie: #ffffff;
+  --texto: var(--tinta);
+  --texto-suave: #5c5546;
+  --linea: #d9cdb2;
+  --borde-campo: #7a7262;
+  --accion: var(--chile);
+  --accion-hover: #a00d25;
+  --sobre-accion: var(--carta);
+  --peligro: #a00d25;
+  --foco: var(--jarra);
+  --texto-exito: var(--nopal);
+  --texto-info: var(--jarra);
+  --texto-aviso: #8a6400;
+  --sombra-carta: none;
 
   color-scheme: light;
 }
 
-/* Tema oscuro: cocina, turnos y drive thru en modo oscuro */
-[data-theme="dark"] {
-  --masa: #1c120d;
-  --barro: #33241b;
-  --tarjeta: #2a1d16;
-  --linea: #3d2b21;
-  --borde-campo: #8c7563;
-  --cafe: #fbefe2;
-  --cafe-suave: #b9a08e;
-  --chile: #ff6b5b;
-  --chile-hover: #ff8a7d;
-  --sobre-chile: #1c120d;
-  --rosa: #f06a9e;
-  --cempasuchil: #f4a019;
-  --cempasuchil-texto: #f4a019;
-  --nopal: #6fcf7f;
-  --talavera: #7fb2f0;
-  --chile-tinte: #3a1714;
-  --nopal-tinte: #18301e;
-  --talavera-tinte: #1a2a3d;
-  --cempasuchil-tinte: #3a2a0e;
-  --sombra-tarjeta: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
-
-  --logo-fondo: #2b1810;
-  --logo-jarro: #c8633a;
-  --logo-boca: #4a200e;
-  --logo-vapor: #f4a019;
+/* Tema mesa (oscuro, verde): kiosko, cocina, turnos y drive thru.
+   Va después de papel para ganarle a :root cuando <html data-theme="mesa">. */
+[data-theme="mesa"] {
+  --fondo: var(--mesa);
+  --fondo-alterno: var(--mesa-alta);
+  --superficie: var(--mesa-alta);
+  --texto: var(--carta);
+  --texto-suave: #bfd3c6;
+  --linea: var(--mesa-linea);
+  --borde-campo: #9dbbaa;
+  --accion: var(--maiz);
+  --accion-hover: #ffc933;
+  --sobre-accion: var(--tinta);
+  --peligro: #ff9c8f;
+  --foco: var(--maiz);
+  --texto-exito: #7bd99a;
+  --texto-info: #8db3f2;
+  --texto-aviso: var(--maiz);
+  --sombra-carta: 0 12px 24px rgba(0, 0, 0, 0.35);
 
   color-scheme: dark;
 }

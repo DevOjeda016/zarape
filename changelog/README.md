@@ -47,6 +47,8 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-10 | [008-identidad-loteria](2026-11-10-008-identidad-loteria.md) | Identidad nueva "Lotería": carta número 1 con jarrito y zarape, temas papel y mesa, Ultra + Libre Franklin. |
+| 2026-11-10 | [007-skill-frontend-design](2026-11-10-007-skill-frontend-design.md) | Skill oficial `frontend-design` de Anthropic para que el diseño salga con carácter y no genérico. |
 | 2026-11-10 | [006-convenciones-claude-md](2026-11-10-006-convenciones-claude-md.md) | Sección "Convenciones" en CLAUDE.md (idioma, ramas, Conventional Commits, glosario) y estados de comanda en inglés. |
 | 2026-11-10 | [005-codigo-en-ingles](2026-11-10-005-codigo-en-ingles.md) | Código, BD, rutas REST y env en inglés (Branch, Employee, Food…); migraciones juntas en una inicial; UI y docs siguen en español. |
 | 2026-11-10 | [004-admin-modulo-gestion](2026-11-10-004-admin-modulo-gestion.md) | Intranet del Módulo I: login, rutas por rol, menú de gestión y pantallas de los catálogos con búsqueda, alta, edición, baja e impresión. |

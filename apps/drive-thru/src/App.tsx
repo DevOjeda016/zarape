@@ -7,12 +7,13 @@ export function App() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="flex flex-col items-center gap-4 text-center"
+        className="flex flex-col items-center gap-6 text-center"
       >
-        <img src="/jarro.svg" alt="" width={128} height={128} className="size-32" />
-        <h1 className="font-heading text-6xl font-extrabold tracking-tight">El Zarape</h1>
-        <p className="text-lg font-medium text-muted-foreground">Sabor mexicano a tu ritmo.</p>
-        <p className="rounded-full bg-secondary px-4 py-1 text-sm font-semibold">Módulo III · Drive thru</p>
+        <h1>
+          <img src="/carta.svg" alt="El Zarape" width={208} height={320} className="h-80 w-auto -rotate-3 rounded-carta shadow-carta" />
+        </h1>
+        <p className="font-heading text-3xl">Sabor mexicano a tu ritmo.</p>
+        <p className="rounded-full border-2 border-current px-4 py-1 text-sm font-semibold">Módulo III · Drive thru</p>
       </motion.section>
     </main>
   );

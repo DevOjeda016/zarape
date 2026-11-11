@@ -1,16 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="El Zarape">
-<defs><mask id="zr-m-mono" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
-<rect width="120" height="120" fill="#fff"/>
-<path d="M16 60Q58 66 100 60V62Q58 68 16 62Z" fill="#000"/><path d="M16 66.5Q58 72.5 100 66.5V68Q58 74 16 68Z" fill="#000"/><path d="M16 71Q58 77 100 71V72.5Q58 78.5 16 72.5Z" fill="#000"/><path d="M16 76Q58 82 100 76V78Q58 84 16 78Z" fill="#000"/>
-<g stroke="#000" stroke-width="1.6" stroke-linecap="round"><line x1="34" y1="80.8" x2="34" y2="85.5"/><line x1="38" y1="81.1" x2="38" y2="85.8"/><line x1="42" y1="81.4" x2="42" y2="86.1"/><line x1="46" y1="81.6" x2="46" y2="86.3"/><line x1="50" y1="81.7" x2="50" y2="86.4"/><line x1="54" y1="81.8" x2="54" y2="86.5"/><line x1="58" y1="81.8" x2="58" y2="86.5"/><line x1="62" y1="81.8" x2="62" y2="86.5"/><line x1="66" y1="81.7" x2="66" y2="86.4"/><line x1="70" y1="81.6" x2="70" y2="86.3"/><line x1="74" y1="81.4" x2="74" y2="86.1"/><line x1="78" y1="81.1" x2="78" y2="85.8"/><line x1="82" y1="80.8" x2="82" y2="85.5"/></g>
-<ellipse cx="58" cy="36" rx="20.5" ry="3.2" fill="#000"/>
-</mask><mask id="zr-m-asa" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
-<rect width="120" height="120" fill="#fff"/>
-<path d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z" fill="#000"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-label="El Zarape">
+<defs><clipPath id="zr-mono"><path d="M28 30H192V160Q150 172 110 160Q70 148 28 162Z"/></clipPath>
+<mask id="zr-mono-jarro" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="220">
+<rect width="220" height="220" fill="#fff"/>
+<path d="M66 164Q110 178 154 164" fill="none" stroke="#000" stroke-width="4"/>
+<circle cx="88" cy="184" r="3" fill="#000"/><circle cx="110" cy="188" r="3" fill="#000"/><circle cx="132" cy="184" r="3" fill="#000"/>
+<ellipse cx="110" cy="122" rx="24" ry="3.5" fill="#000"/>
+</mask>
+<mask id="zr-mono-hueco" maskUnits="userSpaceOnUse" x="0" y="0" width="220" height="220">
+<rect width="220" height="220" fill="#fff"/>
+<path d="M78 130Q70 122 82 118H138Q150 122 142 130Q168 152 156 186Q148 206 110 206Q72 206 64 186Q52 152 78 130Z" stroke="#000" stroke-width="12" stroke-linejoin="round"/>
+<ellipse cx="110" cy="122" rx="32" ry="9" stroke="#000" stroke-width="12"/>
+<path d="M152 142Q182 140 174 168Q168 182 152 178" fill="none" stroke="#000" stroke-width="22" stroke-linecap="round"/>
 </mask></defs>
-<g transform="translate(-3 4)" fill="currentColor" stroke="currentColor">
-<g fill="none" stroke-width="3" stroke-linecap="round"><path d="M48 26c-4-4 4-7 0-12"/><path d="M58 24c-4-4 4-7 0-12"/><path d="M68 26c-4-4 4-7 0-12"/></g>
-<path d="M75 51C99 44 103 72 82 78" fill="none" stroke-width="7" stroke-linecap="round" mask="url(#zr-m-asa)"/>
-<g mask="url(#zr-m-mono)" stroke="none"><path d="M34 36C38 40 40 44 40 48C30 54 26 64 28 76C30 90 38 98 46 100L70 100C78 98 86 90 88 76C90 64 86 54 76 48C76 44 78 40 82 36Z"/><ellipse cx="58" cy="36" rx="25" ry="5"/></g>
+<g fill="currentColor" stroke="currentColor">
+<g mask="url(#zr-mono-hueco)">
+<g clip-path="url(#zr-mono)" stroke="none"><rect x="20" y="30" width="180" height="18"/><rect x="20" y="62" width="180" height="8"/><rect x="20" y="86" width="180" height="8"/><rect x="20" y="108" width="180" height="16"/><rect x="20" y="138" width="180" height="40"/></g>
+<path d="M28 30H192V160Q150 172 110 160Q70 148 28 162Z" fill="none" stroke-width="4" stroke-linejoin="round"/>
+<path d="M34 160.1v12M46 157.1v12M58 155.2v12M70 154.5v12M150 166.0v12M162 165.6v12M174 164.1v12M186 161.6v12" stroke-width="3" stroke-linecap="round"/>
+</g>
+<path d="M18 30H202" stroke-width="7" stroke-linecap="round"/>
+<path d="M152 142Q182 140 174 168Q168 182 152 178" fill="none" stroke-width="10" stroke-linecap="round"/>
+<g mask="url(#zr-mono-jarro)" stroke="none"><path d="M78 130Q70 122 82 118H138Q150 122 142 130Q168 152 156 186Q148 206 110 206Q72 206 64 186Q52 152 78 130Z"/><ellipse cx="110" cy="122" rx="32" ry="9"/></g>
 </g>
 </svg>

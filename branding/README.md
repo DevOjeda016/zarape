@@ -2,119 +2,123 @@
 
 Brunch mexicano que pides y pagas desde cualquier pantalla: el kiosko del restaurante, tu teléfono rumbo al drive thru o la intranet donde el equipo administra el menú. Esta guía define cómo se ve, cómo suena y cómo se construye la marca en las tres apps.
 
-> El manual del documento de requerimientos (paletas A/B/C, Arial Black, Comic Sans MS) era solo un ejemplo. El equipo propone esta identidad nueva, con la misma idea de fondo: nombre, imagen mexicana y un zarape de colores.
+> El manual del documento de requerimientos (paletas A/B/C, Arial Black, Comic Sans MS) era solo un ejemplo. El equipo propone esta identidad, con la misma idea de fondo: nombre, imagen mexicana y un zarape de colores.
 
-## Idea de marca
+## Idea de marca: Lotería
 
-**Un jarrito de café de olla envuelto en su zarape.** El jarro de barro humeante es la mañana y la cocina de casa; el zarape con flecos que lo abraza es la tradición mexicana y el nombre de la marca. Calidez de cocina casera con la rapidez de lo digital.
+**Cada platillo es una carta y tu pedido se canta.** La lotería es el juego de mesa que todo México reconoce: cartas con marco negro, número en la esquina, un dibujo al centro y el nombre abajo. En El Zarape el menú es la baraja, la pantalla es la mesa verde donde se reparten las cartas y, cuando tu pedido está listo, la cocina lo canta: "¡Lotería! La 042 ya está lista."
+
+La carta número 1 es la de la casa: **un jarrito de barro frente a un zarape colgado**. El jarro de café de olla es la mañana y la cocina de casa; el zarape es la tradición y el nombre de la marca.
 
 | | |
 |---|---|
 | Esencia | Brunch mexicano rápido, cálido y sin filas. |
-| Personalidad | Cálida, directa, orgullosamente mexicana sin caer en caricatura. |
+| Personalidad | Juguetona, directa, orgullosamente mexicana sin caer en caricatura. |
 | Slogan | **Sabor mexicano a tu ritmo.** |
-| Frases de apoyo | "Pide sin fila." · "Tu desayuno, a tu hora." · "Del comal a tu mano." |
+| Frases de apoyo | "Pide sin fila." · "Tu desayuno, a tu hora." · "¡Lotería! Ya está tu pedido." |
+
+Exploración de direcciones (se eligió C, Lotería): https://claude.ai/artifact/8sdxUrvWNYTEz3d4rGBmF9
 
 ## Logo
 
-El **isotipo** es un **jarrito de barro** como los de café de olla: panza redonda, boca abierta y asa de lado, **envuelto en un zarape** con flecos (crema, rosa, cempasúchil, talavera, crema) y con tres hilos de vapor. Funciona solo (ícono de app, favicon) o junto al nombre.
-
-**Logotipo (lockup):** jarro + "El Zarape" en Bricolage Grotesque ExtraBold (800), color `cafe`. El nombre mide de alto la mitad del jarro. Debajo, opcional, el slogan en Inter 500, color `cafe-suave`.
+El logo es **la carta número 1**: marco negro doble, el número en su recuadro, el dibujo del jarro con el zarape y el título **EL ZARAPE** en Ultra, convertido a curvas.
 
 | Archivo | Uso |
 |---|---|
-| `jarro.svg` | El jarro sin fondo. Encabezados, lockup, splash. Se adapta al tema. |
-| `isotipo.svg` | Jarro sobre cuadro redondeado masa. Ícono de app y favicon en claro. Se adapta al tema. |
-| `isotipo-oscuro.svg` | Jarro sobre cuadro redondeado `cafe`. Ícono y splash en oscuro. |
-| `isotipo-maskable.svg` | Ícono PWA `purpose: maskable` (fondo a sangre, arte al 80 %). |
-| `jarro-mono.svg` | Una tinta con `currentColor`: toma el color del texto. Tickets impresos, sellos, íconos de UI. |
+| `carta.svg` | Logo principal: la carta completa con título. Pantalla de inicio, encabezados grandes, documentos. |
+| `jarro.svg` | Solo el dibujo (zarape y jarro), sin carta. Ilustración en estados vacíos y portadas. |
+| `isotipo.svg` | La carta inclinada sobre un cuadro redondeado verde mesa, sin título. Ícono de la app y favicon. |
+| `isotipo-maskable.svg` | Ícono PWA `purpose: maskable` (mesa a sangre, carta dentro de la zona segura). |
+| `jarro-mono.svg` | Una tinta con `currentColor`: franjas alternas rellenas y jarro sólido. Tickets impresos y sellos. |
 
-**Modo claro, oscuro y variantes.** Los SVG usan variables CSS con valor de respaldo. Como `<img>` se ven con su color fijo; insertados en línea (componente React) toman el tema de la página:
-
-| Variable | Claro | Oscuro | Pinta |
-|---|---|---|---|
-| `--logo-fondo` | `#FFF8EF` | `#2B1810` | Cuadro del isotipo |
-| `--logo-jarro` | `#B4532A` | `#C8633A` | Barro del jarro y asa |
-| `--logo-boca` | `#5E2A14` | `#4A200E` | Interior de la boca |
-| `--logo-vapor` | `#B3261E` | `#F4A019` | Hilos de vapor |
-
-Las franjas del zarape y los flecos **no cambian** con el tema: son la firma de la marca. El barro se aclara en oscuro para mantener 3:1 contra el fondo.
-
-Todas las variantes salen de una sola geometría: si cambia el jarro o un color, edita `scripts/generar-logos.js` y corre `node branding/scripts/generar-logos.js branding/logos`.
+Los colores del logo son fijos: la carta siempre es papel, con o sin tema oscuro. Todas las variantes salen de una sola geometría: si cambia el dibujo o un color, edita `scripts/generar-logos.js` y corre `node branding/scripts/generar-logos.js branding/logos` (necesita `pnpm install`, porque toma la fuente Ultra de `packages/ui`).
 
 Reglas:
 
-- Tamaño mínimo: 24 px en pantalla, 12 mm impreso.
-- Aire alrededor: un cuarto del ancho del isotipo por lado.
+- Tamaño mínimo: la carta completa a 96 px de alto (el título deja de leerse abajo de eso); el isotipo a 16 px.
+- Aire alrededor: un cuarto del ancho de la carta por lado.
+- La carta puede inclinarse hasta 6° cuando está "sobre la mesa" (ícono, pantalla de inicio). No se estira, no se delinea de otro color y no se le cambia el número.
 - No cambiar el orden ni los colores de las franjas.
-- No agregar sombrero, bigote, nopal ni cactus. El jarro y el zarape ya dicen "México".
-- No estirar, rotar, delinear ni poner sombra.
-- Sobre fotos, usar el isotipo con su cuadro (claro u oscuro), nunca el jarro suelto.
-- Pendiente: lockup en vector con el texto convertido a curvas, e íconos PNG de la PWA generados desde `isotipo.svg` y `isotipo-maskable.svg`.
+- No agregar sombrero, bigote, nopal ni cactus. El jarro, el zarape y la carta ya dicen "México".
+- Pendiente: íconos PNG de la PWA generados desde `isotipo.svg` e `isotipo-maskable.svg`.
 
 ## Color
 
-Paleta de cocina mexicana: masa, barro, café de olla y chile como base; las franjas del zarape como acentos. Todo par texto/fondo listado cumple WCAG AA (4.5:1) en tema claro y oscuro.
+Los colores de una baraja de lotería: papel de carta, tinta negra, la mesa verde y los colores impresos de las cartas. Hay **dos temas**: **papel** (claro) y **mesa** (verde oscuro). Todo par texto/fondo listado cumple WCAG AA (4.5:1) en su tema.
 
-| Token | Claro | Oscuro | Uso |
-|---|---|---|---|
-| `masa` | `#FFF8EF` | `#1C120D` | Fondo de página. |
-| `barro` | `#F3E6D6` | `#33241B` | Fondo alterno: secciones, barra lateral, filas pares. |
-| `tarjeta` | `#FFFFFF` | `#2A1D16` | Tarjetas, modales, ticket. |
-| `linea` | `#E7D5C1` | `#3D2B21` | Divisores decorativos (no para bordes de campos). |
-| `borde-campo` | `#9C8573` | `#8C7563` | Borde de inputs y controles (3:1). |
-| `cafe` | `#2B1810` | `#FBEFE2` | Texto principal. |
-| `cafe-suave` | `#6B5446` | `#B9A08E` | Texto secundario, ayudas, metadatos. |
-| `chile` | `#B3261E` | `#FF6B5B` | Color principal: botón primario, precio total, enlaces. |
-| `chile-hover` | `#8F1D17` | `#FF8A7D` | Hover y presionado del primario. |
-| `sobre-chile` | `#FFFFFF` | `#1C120D` | Texto sobre `chile`. |
-| `rosa` | `#C2185B` | `#F06A9E` | Acento: combos, promos, "combo de la semana". |
-| `cempasuchil` | `#F4A019` | `#F4A019` | Relleno de acento con texto `cafe` encima (nunca texto naranja sobre masa). |
-| `cempasuchil-texto` | `#8A5A00` | `#F4A019` | Texto de advertencia. |
-| `nopal` | `#2F7A3E` | `#6FCF7F` | Éxito: "Lista", pago aprobado. |
-| `talavera` | `#1F5FA8` | `#7FB2F0` | Información: "Pagada", ayudas. |
+**Colores fijos** (no cambian con el tema; se usan como relleno):
 
-Tintes para insignias (fondo + texto del mismo color): `chile-tinte`, `nopal-tinte`, `talavera-tinte`, `cempasuchil-tinte`.
-
-**Estados de comanda** (siempre color + texto + ícono, nunca solo color):
-
-| Estado | Color | Ícono |
+| Token | Valor | Uso |
 |---|---|---|
-| Pagada | `talavera` | recibo |
-| En cocina | `cempasuchil-texto` | flama |
-| Lista | `nopal` | campana |
-| Entregada | `cafe-suave` sobre `barro` | check |
-| Cancelada / pago rechazado | `chile` | x |
+| `mesa` | `#12402E` | Fondo del tema mesa, barra lateral de gestión, color de la barra del navegador. |
+| `mesa-alta` | `#1A4D39` | Superficies sobre la mesa: menús, diálogos, filas alternas. |
+| `mesa-linea` | `#2C5E49` | Divisores sobre la mesa. |
+| `carta` | `#FFFBF0` | Papel de las cartas y fondo del tema papel. |
+| `papel` | `#F3EBD7` | Fondo alterno claro: filas pares, secciones. |
+| `tinta` | `#000000` | Texto en papel, marcos de las cartas. |
+| `chile` | `#C8102E` | Acción principal en papel (Pagar, total, enlaces). Texto `carta` encima. |
+| `maiz` | `#F2B705` | Acción principal en mesa, elemento seleccionado, "en cocina". Texto `tinta` encima, nunca texto amarillo sobre papel. |
+| `jarra` | `#1F4FA0` | Información, "pagada", foco en papel. Texto `carta` encima. |
+| `nopal` | `#1E7A46` | Éxito: "lista", pago aprobado. Texto `carta` encima. |
+| `rosa` | `#E0457B` | Combos y "combo de la semana". Solo como relleno con texto `tinta`. |
+| `barro` | `#B5562B` | Solo el jarro del logo. |
 
-**Franjas del zarape** (de arriba abajo): rosa, cempasúchil, masa, talavera, masa, nopal, rosa. Úsalas como detalle (borde superior del ticket, separador del menú, pantalla de carga), nunca como fondo de texto.
+**Colores por tema** (en el código se usan estos; cambian solos con `data-theme`):
+
+| Token | Papel | Mesa | Uso |
+|---|---|---|---|
+| `fondo` | `carta` | `mesa` | Fondo de página. |
+| `fondo-alterno` | `papel` | `mesa-alta` | Secciones, filas pares. |
+| `superficie` | `#FFFFFF` | `mesa-alta` | Diálogos, menús, tarjetas de shadcn. |
+| `texto` | `tinta` | `carta` | Texto principal. |
+| `texto-suave` | `#5C5546` | `#BFD3C6` | Texto secundario, ayudas, metadatos. |
+| `linea` | `#D9CDB2` | `mesa-linea` | Divisores decorativos. |
+| `borde-campo` | `#7A7262` | `#9DBBAA` | Borde de inputs y controles (3:1). |
+| `accion` / `sobre-accion` | `chile` / `carta` | `maiz` / `tinta` | Botón primario y su texto. |
+| `accion-hover` | `#A00D25` | `#FFC933` | Hover y presionado del primario. |
+| `peligro` | `#A00D25` | `#FF9C8F` | Borrar, errores (siempre con confirmación e ícono). |
+| `foco` | `jarra` | `maiz` | Anillo de foco. |
+| `texto-exito` / `texto-info` / `texto-aviso` | `nopal` / `jarra` / `#8A6400` | `#7BD99A` / `#8DB3F2` / `maiz` | Mensajes de estado en texto. |
+
+**Estados de comanda** (insignia rellena: color + texto + ícono, nunca solo color; igual en los dos temas):
+
+| Estado | Relleno | Texto | Ícono |
+|---|---|---|---|
+| Pagada | `jarra` | `carta` | recibo |
+| En cocina | `maiz` | `tinta` | flama |
+| Lista | `nopal` | `carta` | campana |
+| Entregada | `papel` | `tinta` | check |
+| Cancelada / pago rechazado | `chile` | `carta` | x |
+
+**Franjas del zarape** (de arriba abajo): chile, maíz, carta, jarra, carta, nopal, rosa, maíz, chile. Úsalas como detalle (logo, pantalla de carga, orilla del ticket), nunca como fondo de texto.
 
 ## Tipografía
 
 | Rol | Familia | Por qué |
 |---|---|---|
-| Display | **Bricolage Grotesque** (variable, 600–800) | Grotesca con carácter artesanal; da personalidad a títulos, nombres de platillos y números de turno. |
-| Interfaz y texto | **Inter** (variable, 400–700) | Estándar actual de UI: muy legible en pantallas chicas y números tabulares para precios. |
+| Display | **Ultra** (un solo peso) | Slab gorda como la madera de imprenta de los carteles y las cartas de lotería. Títulos de carta, títulos de pantalla, precios grandes y números de turno. |
+| Interfaz y texto | **Libre Franklin** (variable, 400–800) | Grotesca clásica americana, sobria al lado de Ultra; muy legible en tablas y tickets, con números tabulares. |
 
-Ambas son libres (Google Fonts). En las apps se **autoalojan** con `@fontsource-variable/bricolage-grotesque` y `@fontsource-variable/inter` para que funcionen sin conexión (PWA).
+Ambas son libres (Google Fonts) y se **autoalojan** con `@fontsource/ultra` y `@fontsource-variable/libre-franklin` para que funcionen sin conexión (PWA). Ultra tiene un solo peso: nunca le pongas `font-bold` (el tema apaga el engrosado falso con `font-synthesis-weight: none`).
 
 Escala:
 
 | Estilo | Familia | Tamaño / interlínea | Peso | Uso |
 |---|---|---|---|---|
-| `turno` | Display | 120 / 120 | 800 | Número en pantalla de turnos. |
-| `display-xl` | Display | 56 / 60 | 800 | Portada del kiosko. |
-| `display-lg` | Display | 40 / 44 | 700 | Títulos de pantalla en kiosko. |
-| `display-md` | Display | 28 / 32 | 700 | Títulos de sección, nombre de categoría. |
-| `titulo` | Display | 20 / 26 | 700 | Nombre de platillo en tarjeta. |
-| `cuerpo-lg` | Inter | 18 / 28 | 400 | Texto en kiosko. |
-| `cuerpo` | Inter | 16 / 24 | 400 | Texto general. |
-| `etiqueta` | Inter | 14 / 20 | 600 | Botones, etiquetas de campo, insignias. |
-| `nota` | Inter | 12 / 16 | 500 | Metadatos, pie de ticket. |
-| `precio` | Inter | 18 / 24 | 700 | Precios (`font-variant-numeric: tabular-nums`). |
+| `turno` | Ultra | 120 / 120 | 400 | Número en pantalla de turnos. |
+| `display-xl` | Ultra | 56 / 60 | 400 | Portada del kiosko. |
+| `display-lg` | Ultra | 40 / 44 | 400 | Títulos de pantalla en kiosko. |
+| `display-md` | Ultra | 28 / 32 | 400 | Títulos de sección, "Tu pedido". |
+| `titulo-carta` | Ultra | 14 / 17, MAYÚSCULAS | 400 | Nombre del platillo al pie de su carta (como en la lotería). Es el único lugar con mayúsculas. |
+| `cuerpo-lg` | Libre Franklin | 18 / 28 | 400 | Texto en kiosko. |
+| `cuerpo` | Libre Franklin | 16 / 24 | 400 | Texto general. |
+| `etiqueta` | Libre Franklin | 14 / 20 | 600 | Botones, etiquetas de campo, insignias. |
+| `nota` | Libre Franklin | 12 / 16 | 500 | Metadatos, pie de ticket. |
+| `precio` | Ultra en cartas y totales; Libre Franklin 600 con `tabular-nums` en tablas y ticket | — | — | Precios siempre con `$` y dos decimales en el ticket. |
 
 ## Voz y tono
 
-Hablamos de **tú**, corto y amable, como quien te atiende en la barra. Mexicano natural, sin modismos forzados ni "¡Ándale, güey!".
+Hablamos de **tú**, corto y amable, como quien te atiende en la barra. Mexicano natural, sin modismos forzados ni "¡Ándale, güey!". El juego de la lotería aparece en el momento que lo merece (tu pedido listo), no en cada botón.
 
 | Momento | Sí | No |
 |---|---|---|
@@ -123,11 +127,12 @@ Hablamos de **tú**, corto y amable, como quien te atiende en la barra. Mexicano
 | Pagar | "Pagar $145.00" | "Proceder al pago" |
 | Error de login | "Usuario o contraseña incorrectos." | "Error 401: credenciales inválidas." |
 | Pago rechazado | "No pudimos cobrar. Revisa los datos de la tarjeta e intenta otra vez." | "Transacción fallida." |
-| Pedido listo | "¡Tu pedido 042 está listo! Pasa a recogerlo." | "Estatus actualizado a: LISTO." |
+| En cocina | "Se está cocinando. Cuando esté listo te cantamos." | "Estatus: EN_COCINA." |
+| Pedido listo | "¡Lotería! La 042 ya está lista. Pasa a recogerla." | "Estatus actualizado a: LISTO." |
 | Sin conexión | "Sin internet. Puedes ver el menú, pero para pagar necesitas conexión." | "Offline." |
 | Terminal | "Pago con terminal: próximamente" | Ocultar el botón. |
 
-Reglas: verbos al inicio en botones ("Ver pedido", "Agregar combo"); precios siempre con dos decimales y `$`; solo un "¡!" por pantalla, y solo para buenas noticias.
+Reglas: verbos al inicio en botones ("Ver pedido", "Agregar combo"); precios siempre con dos decimales y `$` en el ticket; solo un "¡!" por pantalla, y solo para buenas noticias.
 
 ## Fotografía
 
@@ -135,92 +140,103 @@ Reglas: verbos al inicio en botones ("Ver pedido", "Agregar combo"); precios sie
 - Encuadre cenital o a 45°, el platillo ocupa 60–70 % de la foto.
 - Utilería mexicana sutil: barro, talavera, madera, una orilla de zarape. Sin banderitas ni sombreros.
 - Colores naturales, sin saturar de más; sin texto encima de la foto.
-- Proporciones: 4:3 tarjetas de producto, 16:9 portada, 1:1 miniaturas.
-- Archivos: WebP (respaldo JPG), máximo 1920×1080, menos de 200 KB en tarjetas. Siempre con `alt` que describa el platillo.
+- En las cartas la foto va dentro del marco, con borde `tinta` de 2 px: proporción 1:1. Portada 16:9.
+- Archivos: WebP (respaldo JPG), máximo 1920×1080, menos de 200 KB en cartas. Siempre con `alt` que describa el platillo.
 
 ## Iconografía
 
-[Phosphor Icons](https://phosphoricons.com) (`@phosphor-icons/react`), configurado como `iconLibrary` de shadcn. Redondeado y cálido como el jarro y Bricolage Grotesque. Color `cafe` o el color del estado.
+[Phosphor Icons](https://phosphoricons.com) (`@phosphor-icons/react`), configurado como `iconLibrary` de shadcn. Color `texto` o el color del estado.
 
 | Peso | Uso |
 |---|---|
-| `regular` | Interfaz en general: navegación, botones, tablas. |
-| `fill` | Estado seleccionado o activo (pestaña actual, categoría elegida). El cambio regular → fill se anima con Motion. |
-| `duotone` | Botones grandes de categoría en el kiosko y estados vacíos. |
-| `bold` | Solo en la pantalla de turnos y de cocina, para leer a distancia. |
+| `regular` | Gestión (intranet): navegación, botones, tablas. |
+| `bold` | Kiosko, drive thru, cocina y turnos: combina con el trazo grueso de las cartas y se lee a distancia. |
+| `fill` | Estado seleccionado o activo (pestaña actual, categoría elegida). El cambio a fill se anima con Motion. |
 
 Tamaños: 20 px en texto, 24 px en botones, 32 px en kiosko. Íconos clave: `ForkKnifeIcon` (platillos), `CoffeeIcon` (bebidas), `PackageIcon` (combos), `CakeIcon` (postres), `ReceiptIcon` (ticket), `FireIcon` (en cocina), `BellRingingIcon` (lista), `QrCodeIcon`, `MapPinIcon` (sucursal), `CarIcon` (drive thru), `StorefrontIcon` (en sitio). Los íconos de estado de comanda (EstadoComanda) usan estos mismos.
 
 ## Forma y espacio
 
 - Base de 4 px: `space-1` 4 · `space-2` 8 · `space-3` 12 · `space-4` 16 · `space-6` 24 · `space-8` 32 · `space-12` 48.
-- Esquinas: `radius-sm` 6 (insignias) · `radius-md` 10 (botones, campos) · `radius-lg` 16 (tarjetas, ticket) · `radius-pill` (chips de categoría).
+- Esquinas: `radius-sm` 4 (insignias) · `radius-md` 6 (botones, campos) · `radius-carta` 8 (cartas, ticket) · `radius-pill` (pestañas de categoría).
+- **Marco de carta**: borde `tinta` de 3 px (`--marco`) con un segundo marco interior de 2 px. Es la firma de la marca: cartas de producto, ticket, turno y QR. Las tablas y formularios de gestión no lo llevan.
+- Sombra: en papel no hay sombras (se separa con marco o color de fondo). En mesa, las cartas proyectan `shadow-carta`, como cartas sobre la mesa.
 - Áreas táctiles: `touch-min` 44 px (teléfono, intranet) · `touch-kiosko` 56 px (tableta del restaurante).
-- Una sola sombra suave (`sombra-tarjeta`); el resto se separa con color de fondo.
 
 ## Componentes: shadcn/ui con la marca
 
-La UI se arma con **shadcn/ui** + **Tailwind CSS v4** en `packages/ui`. Los tokens de la marca se conectan a las variables de shadcn, así todos los componentes salen con la identidad de El Zarape sin reescribirlos:
+La UI se arma con **shadcn/ui** + **Tailwind CSS v4** en `packages/ui`. Los tokens por tema se conectan a las variables de shadcn, así todos los componentes salen con la identidad sin reescribirlos:
 
 | Variable shadcn | Token de marca |
 |---|---|
-| `--background` | `masa` |
-| `--foreground` | `cafe` |
-| `--card`, `--popover` | `tarjeta` |
-| `--primary` / `--primary-foreground` | `chile` / `sobre-chile` |
-| `--secondary`, `--muted` | `barro` |
-| `--muted-foreground` | `cafe-suave` |
-| `--accent` / `--accent-foreground` | `cempasuchil-tinte` / `cafe` |
-| `--destructive` | `chile-hover` (siempre con diálogo de confirmación e ícono) |
+| `--background` / `--foreground` | `fondo` / `texto` |
+| `--card`, `--popover` | `superficie` |
+| `--primary` / `--primary-foreground` | `accion` / `sobre-accion` |
+| `--secondary`, `--muted`, `--accent` | `fondo-alterno` |
+| `--muted-foreground` | `texto-suave` |
+| `--destructive` | `peligro` |
 | `--border` | `linea` |
 | `--input` | `borde-campo` |
-| `--ring` | `talavera` |
-| `--chart-1` … `--chart-5` | `chile`, `talavera`, `nopal`, `cempasuchil`, `rosa` |
-| `--radius` | `radius-md` (10 px) |
+| `--ring` | `foco` |
+| `--chart-1` … `--chart-5` | `chile`, `jarra`, `maiz`, `nopal`, `rosa` |
+| `--sidebar*` | Siempre mesa: fondo `mesa`, texto `carta`, activo `maiz` |
+| `--radius` | `radius-md` (6 px) |
 
-Se usan de shadcn: Button, Input, Form, Select, Dialog, Sheet, Drawer, Table, Tabs, Badge, Card, Sonner, Skeleton, Chart. Componentes propios de la marca encima: TarjetaProducto, Ticket, EstadoComanda, Turnos, VisorQR.
+Temas: papel es el predeterminado. `data-theme="mesa"` en `<html>` pone el tema verde (kiosko, cocina, drive thru) y la variante `dark:` de Tailwind/shadcn. Dentro de una pantalla mesa, cada carta lleva `data-theme="papel"` para que sus campos y botones usen los estilos claros.
+
+Utilidades de marca: `bg-mesa`, `bg-carta`, `border-tinta`, `bg-maiz`, `text-chile`, `text-exito`, `rounded-carta`, `shadow-carta`, `font-heading` (Ultra).
+
+Se usan de shadcn: Button, Input, Form, Select, Dialog, Sheet, Drawer, Table, Tabs, Badge, Card, Sonner, Skeleton, Chart. Componentes propios de la marca encima:
+
+- **Carta**: el marco doble de lotería; base de los demás.
+- **TarjetaProducto**: carta con el precio en el recuadro del número, la foto al centro, el nombre en `titulo-carta` al pie y el botón "Agregar" (`maiz`) debajo.
+- **Ticket**: hoja papel con marco; líneas, IVA y total en Ultra `chile`.
+- **EstadoComanda**: insignia rellena de la tabla de estados.
+- **Turnos**: la pantalla canta los números listos como cartas.
+- **VisorQR**: el QR dentro de una carta "Tu pedido" con el número de turno en la esquina.
 
 ## Movimiento
 
-Look **fresco y elegante**: el movimiento explica qué pasó, no decora. Se usa **Motion** (`motion/react`).
+El movimiento explica qué pasó, no decora. Se usa **Motion** (`motion/react`).
 
 | Momento | Animación |
 |---|---|
-| Agregar producto | La tarjeta da un pulso corto y la línea entra al ticket con animación de layout. |
+| Agregar producto | La carta se levanta un poco (4 px) y la línea entra al ticket con animación de layout. |
 | Cambiar cantidad | El total cuenta hacia el nuevo valor (`NumberTicker` o spring de Motion). |
 | Cambio de pantalla | Fundido + desplazamiento de 8–12 px con `AnimatePresence`. |
 | Ticket en móvil | Drawer que sube desde abajo con resorte. |
-| Pago aprobado | Check que se dibuja + aparece el turno. |
-| Pedido listo (turnos) | El número entra grande con resorte y tres pulsos suaves. |
-| Cocina: comanda nueva | La tarjeta entra desde arriba y las demás se recorren (layout). |
+| Pago aprobado | Check que se dibuja y aparece la carta con tu número de turno. |
+| Pedido listo (turnos) | **El momento de la marca:** la carta del turno se voltea y entra grande con resorte: "¡Lotería!". Es la única animación llamativa del sistema. |
+| Cocina: comanda nueva | La carta entra desde arriba y las demás se recorren (layout). |
 | Carga | Skeletons con brillo suave, nunca spinners a pantalla completa. |
 
 Reglas:
 
-- Duración 150–300 ms; resortes suaves (sin rebote exagerado).
+- Duración 150–300 ms (el volteo del turno hasta 500 ms); resortes suaves.
 - Solo animar `transform` y `opacity` (cuida Lighthouse ≥ 90).
-- `<MotionConfig reducedMotion="user">` en cada app: si el usuario pide menos movimiento, se quitan desplazamientos y se dejan fundidos.
+- `<MotionConfig reducedMotion="user">` en cada app: si el usuario pide menos movimiento, se quitan desplazamientos y volteos y se dejan fundidos.
 - Nunca bloquear una acción esperando una animación.
 
 ## Por app
 
 | App | Tema | Carácter |
 |---|---|---|
-| I. Gestión (intranet) | Claro | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. |
-| II. Kiosko en sitio | Claro | Grande y táctil: fotos protagonistas, botones de 56 px, ticket siempre visible a la derecha. |
-| II. Cocina y turnos | Oscuro | Alto contraste a distancia: columnas por estado, números de turno de 120 px, alerta con sonido + parpadeo suave. |
-| III. Drive thru (móvil) | Claro y oscuro | Una mano: barra inferior con Perfil · Ordenar · Revisar pedido; QR grande con brillo al máximo. |
+| I. Gestión (intranet) | Papel, barra lateral mesa | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. Ultra solo en títulos. |
+| II. Kiosko en sitio | Mesa | Cartas grandes sobre la mesa: fotos protagonistas, botones de 56 px, ticket papel siempre visible a la derecha. |
+| II. Cocina y turnos | Mesa | Alto contraste a distancia: columnas por estado, números de turno de 120 px en cartas, alerta con sonido + volteo de la carta. |
+| III. Drive thru (móvil) | Mesa | Una mano: barra inferior con Perfil · Ordenar · Revisar pedido; el QR va en una carta grande con brillo al máximo. |
 
 ## Accesibilidad
 
-- Contraste AA en todo par texto/fondo (ya validado en esta paleta).
-- Foco visible: anillo de 2 px `talavera` con separación de 2 px.
+- Contraste AA en todo par texto/fondo de esta guía (validado en los dos temas).
+- Foco visible: anillo de 2 px `foco` (jarra en papel, maíz en mesa) con separación de 2 px.
 - Estados con texto + ícono, no solo color.
 - El avisador combina sonido y señal visual; respeta `prefers-reduced-motion`.
 - Meta del proyecto: Lighthouse ≥ 90 en rendimiento y accesibilidad.
 
 ## Archivos
 
-- `logos/`: isotipos SVG.
-- `tokens.css`: variables CSS listas para importar en las apps.
-- Sistema de marca interactivo: https://claude.ai/artifact/MBmLHKVu9Q878MttpVD6VQ
+- `logos/`: carta, dibujo, isotipos y versión de una tinta (SVG).
+- `scripts/generar-logos.js`: genera todos los logos desde una sola geometría.
+- `tokens.css`: variables CSS de los dos temas, listas para importar en las apps.
+- Exploración de direcciones: https://claude.ai/artifact/8sdxUrvWNYTEz3d4rGBmF9
