@@ -1,69 +1,73 @@
 /*
- * El Zarape: tema de shadcn/ui sobre Tailwind CSS v4.
+ * El Zarape: tema de shadcn/ui sobre Tailwind CSS v4 (dirección "Lotería").
  * Los valores salen de branding/tokens.css (fuente de verdad, no se copia aquí).
  * Mapeo de variables: tabla "Componentes: shadcn/ui con la marca" de branding/README.md.
  */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/bricolage-grotesque";
-@import "@fontsource-variable/inter";
+@import "@fontsource/ultra/latin-400.css";
+@import "@fontsource-variable/libre-franklin";
 @import "../../../../branding/tokens.css";
 
-/* El tema oscuro se activa con data-theme="dark", igual que en tokens.css */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/*
+ * Variante dark: = tema mesa. Dentro de una sección papel (una carta sobre la mesa)
+ * deja de aplicar, para que los campos y botones de la carta usen los estilos claros.
+ */
+@custom-variant dark (&:where([data-theme="mesa"], [data-theme="mesa"] *):not(:where([data-theme="papel"], [data-theme="papel"] *)));
 
 /* Componentes de este paquete (las apps se detectan solas) */
 @source "../**/*.{ts,tsx}";
 
 /*
- * Variables de shadcn → tokens de marca.
- * Se declaran también en [data-theme="dark"] para que una sección oscura
- * dentro de una página clara (p. ej. cocina) recalcule los colores.
+ * Variables de shadcn → tokens semánticos de marca.
+ * Se declaran en los tres alcances para que una sección con otro tema
+ * (barra lateral mesa en gestión, carta papel en el kiosko) recalcule los colores.
  */
 :root,
-[data-theme="dark"] {
-  --background: var(--masa);
-  --foreground: var(--cafe);
-  --card: var(--tarjeta);
-  --card-foreground: var(--cafe);
-  --popover: var(--tarjeta);
-  --popover-foreground: var(--cafe);
-  --primary: var(--chile);
-  --primary-foreground: var(--sobre-chile);
-  --secondary: var(--barro);
-  --secondary-foreground: var(--cafe);
-  --muted: var(--barro);
-  --muted-foreground: var(--cafe-suave);
-  --accent: var(--cempasuchil-tinte);
-  --accent-foreground: var(--cafe);
-  --destructive: var(--chile-hover);
+[data-theme="papel"],
+[data-theme="mesa"] {
+  --background: var(--fondo);
+  --foreground: var(--texto);
+  --card: var(--superficie);
+  --card-foreground: var(--texto);
+  --popover: var(--superficie);
+  --popover-foreground: var(--texto);
+  --primary: var(--accion);
+  --primary-foreground: var(--sobre-accion);
+  --secondary: var(--fondo-alterno);
+  --secondary-foreground: var(--texto);
+  --muted: var(--fondo-alterno);
+  --muted-foreground: var(--texto-suave);
+  --accent: var(--fondo-alterno);
+  --accent-foreground: var(--texto);
+  --destructive: var(--peligro);
   --border: var(--linea);
   --input: var(--borde-campo);
-  --ring: var(--talavera);
+  --ring: var(--foco);
   --chart-1: var(--chile);
-  --chart-2: var(--talavera);
-  --chart-3: var(--nopal);
-  --chart-4: var(--cempasuchil);
+  --chart-2: var(--jarra);
+  --chart-3: var(--maiz);
+  --chart-4: var(--nopal);
   --chart-5: var(--rosa);
   --radius: var(--radius-md);
 
-  /* Barra lateral (intranet): fondo alterno barro */
-  --sidebar: var(--barro);
-  --sidebar-foreground: var(--cafe);
-  --sidebar-primary: var(--chile);
-  --sidebar-primary-foreground: var(--sobre-chile);
-  --sidebar-accent: var(--cempasuchil-tinte);
-  --sidebar-accent-foreground: var(--cafe);
-  --sidebar-border: var(--linea);
-  --sidebar-ring: var(--talavera);
+  /* Barra lateral de gestión: siempre mesa, aunque la página sea papel */
+  --sidebar: var(--mesa);
+  --sidebar-foreground: var(--carta);
+  --sidebar-primary: var(--maiz);
+  --sidebar-primary-foreground: var(--tinta);
+  --sidebar-accent: var(--mesa-alta);
+  --sidebar-accent-foreground: var(--carta);
+  --sidebar-border: var(--mesa-linea);
+  --sidebar-ring: var(--maiz);
 }
 
 @theme inline {
-  /* Tipografía: font-sans (Inter) viene de --font-sans de tokens.css; títulos con Bricolage */
+  /* Tipografía: font-sans (Libre Franklin) viene de --font-sans de tokens.css; títulos con Ultra */
   --font-heading: var(--font-display);
 
-  /* Esquinas: escala de shadcn a partir de --radius (radius-md, 10 px) */
+  /* Esquinas: escala de shadcn a partir de --radius (radius-md, 6 px); las cartas usan rounded-carta */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -71,9 +75,10 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-carta: 8px;
 
-  /* Sombra única de la marca: shadow-tarjeta */
-  --shadow-tarjeta: var(--sombra-tarjeta);
+  /* Sombra de carta sobre la mesa (en papel no hay sombra): shadow-carta */
+  --shadow-carta: var(--sombra-carta);
 
   /* Colores de shadcn */
   --color-background: var(--background);
@@ -108,31 +113,31 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Tokens de marca como utilidades: bg-masa, text-chile, bg-nopal-tinte… */
-  --color-masa: var(--masa);
-  --color-barro: var(--barro);
-  --color-tarjeta: var(--tarjeta);
-  --color-linea: var(--linea);
-  --color-borde-campo: var(--borde-campo);
-  --color-cafe: var(--cafe);
-  --color-cafe-suave: var(--cafe-suave);
+  /* Colores fijos de marca como utilidades: bg-mesa, bg-carta, border-tinta, bg-maiz… */
+  --color-mesa: var(--mesa);
+  --color-mesa-alta: var(--mesa-alta);
+  --color-carta: var(--carta);
+  --color-papel: var(--papel);
+  --color-tinta: var(--tinta);
   --color-chile: var(--chile);
-  --color-chile-hover: var(--chile-hover);
-  --color-sobre-chile: var(--sobre-chile);
-  --color-rosa: var(--rosa);
-  --color-cempasuchil: var(--cempasuchil);
-  --color-cempasuchil-texto: var(--cempasuchil-texto);
+  --color-maiz: var(--maiz);
+  --color-jarra: var(--jarra);
   --color-nopal: var(--nopal);
-  --color-talavera: var(--talavera);
-  --color-chile-tinte: var(--chile-tinte);
-  --color-nopal-tinte: var(--nopal-tinte);
-  --color-talavera-tinte: var(--talavera-tinte);
-  --color-cempasuchil-tinte: var(--cempasuchil-tinte);
+  --color-rosa: var(--rosa);
+
+  /* Texto de estado según el tema: text-exito, text-info, text-aviso */
+  --color-exito: var(--texto-exito);
+  --color-info: var(--texto-info);
+  --color-aviso: var(--texto-aviso);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    /* Ultra solo tiene un peso: nunca dejar que el navegador la engrose de mentira */
+    font-synthesis-weight: none;
   }
   body {
     @apply bg-background font-sans text-foreground antialiased;

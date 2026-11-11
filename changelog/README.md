@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-10 | [004-identidad-loteria](2026-11-10-004-identidad-loteria.md) | Identidad nueva "Lotería": carta número 1 con jarrito y zarape, temas papel y mesa, Ultra + Libre Franklin. |
 | 2026-11-10 | [003-skill-frontend-design](2026-11-10-003-skill-frontend-design.md) | Skill oficial `frontend-design` de Anthropic para que el diseño salga con carácter y no genérico. |
 | 2026-11-10 | [002-script-logos-esm](2026-11-10-002-script-logos-esm.md) | El script de logos vuelve a correr como módulo ES (`import` en vez de `require`). |
 | 2026-11-10 | [001-herramientas-de-ia](2026-11-10-001-herramientas-de-ia.md) | Skills y MCP oficiales para Claude Code (shadcn, Prisma, Motion, Chrome DevTools), fijados por versión. |

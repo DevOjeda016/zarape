@@ -20,6 +20,7 @@
     "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
+    "opentype.js": "^2.0.0",
     "oxlint": "^1.92.0"
   }
 }
