@@ -13,7 +13,6 @@ export function App() {
           <img src="/carta.svg" alt="El Zarape" width={208} height={320} className="h-80 w-auto -rotate-3 rounded-carta shadow-carta" />
         </h1>
         <p className="font-heading text-3xl">Sabor mexicano a tu ritmo.</p>
-        <p className="rounded-full border-2 border-current px-4 py-1 text-sm font-semibold">Módulo III · Drive thru</p>
       </motion.section>
     </main>
   );

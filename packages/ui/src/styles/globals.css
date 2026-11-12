@@ -124,6 +124,8 @@
   --color-jarra: var(--jarra);
   --color-nopal: var(--nopal);
   --color-rosa: var(--rosa);
+  --color-barro: var(--barro);
+  --color-frijol: var(--frijol);
 
   /* Texto de estado según el tema: text-exito, text-info, text-aviso */
   --color-exito: var(--texto-exito);

@@ -131,6 +131,11 @@ Hablamos de **tú**, corto y amable, como quien te atiende en la barra. Mexicano
 | Pedido listo | "¡Lotería! La 042 ya está lista. Pasa a recogerla." | "Estatus actualizado a: LISTO." |
 | Sin conexión | "Sin internet. Puedes ver el menú, pero para pagar necesitas conexión." | "Offline." |
 | Terminal | "Pago con terminal: próximamente" | Ocultar el botón. |
+| Login de gestión | "Buenas noches." · "Ingresa tu usuario y contraseña." | "Intranet del restaurante: sucursales, menú y combos." · "Solo para la red interna." |
+| Versión nueva | "Recién salido del comal" · "Hay una versión nueva lista para ti." | "Actualización disponible de la aplicación." |
+| Instalar | "Tenla a la mano" · "Instálala y ábrela de un toque." | "Instala la aplicación web progresiva en tu dispositivo." |
+
+**No expliques el sistema.** Nada de "intranet", "módulo", "red interna" ni listas de lo que hace la pantalla: el usuario ya sabe dónde está. El texto acompaña con la voz de la marca; las etiquetas de campos y botones sí son claras y directas, y en pantallas conocidas (login) se usan las frases de siempre.
 
 Reglas: verbos al inicio en botones ("Ver pedido", "Agregar combo"); precios siempre con dos decimales y `$` en el ticket; solo un "¡!" por pantalla, y solo para buenas noticias.
 
@@ -186,9 +191,20 @@ Temas: papel es el predeterminado. `data-theme="mesa"` en `<html>` pone el tema 
 
 Utilidades de marca: `bg-mesa`, `bg-carta`, `border-tinta`, `bg-maiz`, `text-chile`, `text-exito`, `rounded-carta`, `shadow-carta`, `font-heading` (Ultra).
 
-Se usan de shadcn: Button, Input, Form, Select, Dialog, Sheet, Drawer, Table, Tabs, Badge, Card, Sonner, Skeleton, Chart. Componentes propios de la marca encima:
+Se usan de shadcn: Button, Input, Form, Select, Dialog, Sheet, Drawer, Table, Tabs, Badge, Card, Sonner, Skeleton, Chart. Sus campos y botones ya traen la forma de Lotería (en `packages/ui`), así ninguna pantalla se ve "por defecto":
 
-- **Carta**: el marco doble de lotería; base de los demás.
+- **Campos** (Input, Textarea, InputGroup, Select): marco `tinta` de 2 px, fondo `carta` (también sobre la mesa, como una carta), 44 px de alto, foco con contorno de 3 px en `foco`.
+- **Botones**: marco de 2 px. El principal es una ficha: marco `tinta` y relieve de 3 px que se hunde al presionar. Tamaños: `lg` 44 px (acciones principales), `default` 40 px, `icon-lg` 44 px.
+
+Componentes propios de la marca encima:
+
+- **Carta** (`LoteriaCard`, en `packages/ui`): el marco doble de lotería con número, dibujo y título; todo escala con el ancho de la carta. Base de los demás.
+- **Frijol** (`Frijol`): el marcador de la lotería. Marca casillas llenas, brinca mientras algo carga y se riega en la mesa como detalle. Color `frijol` `#4A2414`, solo para él.
+- **Orilla de zarape** (`ZarapeEdge`): las nueve franjas con onda, como tela colgada, con flecos hacia afuera y la orilla del panel siguiendo la curva. Se monta sola arriba o a la izquierda de un panel.
+- **Casilla** (`BoardField` y `BoardFieldButton`): campo de 56 px para pantallas de marca como los logins. Marco `tinta` de 2 px, recuadro a la izquierda con el ícono (como el número de la carta) que se pone `maiz` al enfocar, y un frijol que lo marca cuando ya tiene algo. Para formularios normales, `Input` (44 px).
+- **Abanico de cartas** (`CardFan`): la Concha, el Café y la carta 1 repartidas sobre la mesa; se inclina hacia el mouse. Tamaño con `--card-h`. Los dibujos están en `loteria-art.tsx` (`ConchaArt`, `CafeArt`).
+- **Frijoles en la mesa** (`TableBeans`) y **cargando** (`FrijolLoader`): los frijoles caen después de repartir; mientras algo carga, brincan tres.
+- **Botón `xl`**: la ficha grande (56 px, Ultra, relieve de 5 px) para la acción principal de una pantalla de marca.
 - **TarjetaProducto**: carta con el precio en el recuadro del número, la foto al centro, el nombre en `titulo-carta` al pie y el botón "Agregar" (`maiz`) debajo.
 - **Ticket**: hoja papel con marco; líneas, IVA y total en Ultra `chile`.
 - **EstadoComanda**: insignia rellena de la tabla de estados.
@@ -221,7 +237,7 @@ Reglas:
 
 | App | Tema | Carácter |
 |---|---|---|
-| I. Gestión (intranet) | Papel, barra lateral mesa | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. Ultra solo en títulos. El elemento activo del menú va en `maiz` con texto `tinta`. El login es la excepción: la carta de la casa y el formulario (papel) sobre la mesa. |
+| I. Gestión (intranet) | Papel, barra lateral mesa | Denso y ordenado: tablas, filtros, formularios; color solo para acciones y estados. Ultra solo en títulos. El elemento activo del menú va en `maiz` con texto `tinta`. El login es el momento de marca: en la mesa se reparten tres cartas (la Concha, El Zarape y el Café) y caen frijoles; el formulario va en papel con casillas de 56 px, botón de ficha (Ultra, relieve `tinta`) y saludo por hora. La orilla entre mesa y papel es un zarape con onda (`ZarapeEdge`): a la izquierda del formulario en pantalla grande, arriba de la hoja en el teléfono. |
 | II. Kiosko en sitio | Mesa | Cartas grandes sobre la mesa: fotos protagonistas, botones de 56 px, ticket papel siempre visible a la derecha. |
 | II. Cocina y turnos | Mesa | Alto contraste a distancia: columnas por estado, números de turno de 120 px en cartas, alerta con sonido + volteo de la carta. |
 | III. Drive thru (móvil) | Mesa | Una mano: barra inferior con Perfil · Ordenar · Revisar pedido; el QR va en una carta grande con brillo al máximo. |

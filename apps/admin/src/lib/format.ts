@@ -11,9 +11,3 @@ export function formatDateTime(date: Date): string {
   return dateTime.format(date);
 }
 
-/** Saludo por horario (como RF16 en el drive thru). */
-export function greeting(hour = new Date().getHours()): string {
-  if (hour < 12) return 'Buenos días';
-  if (hour < 19) return 'Buenas tardes';
-  return 'Buenas noches';
-}

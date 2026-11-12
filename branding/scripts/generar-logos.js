@@ -4,6 +4,7 @@
 // (corre `pnpm install` antes), así los SVG se ven igual como <img>, favicon o ícono PWA.
 import fs from 'node:fs';
 import path from 'node:path';
+import { Resvg } from '@resvg/resvg-js';
 import opentype from 'opentype.js';
 
 const out = process.argv[2];
@@ -117,4 +118,19 @@ files['jarro-mono.svg'] = svg('0 0 220 220', `<defs><clipPath id="zr-mono"><path
 
 fs.mkdirSync(out, { recursive: true });
 for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(out, name), text);
-console.log(Object.keys(files).join('\n'));
+
+// --- Íconos PNG de la PWA: Chrome los pide para instalar y iOS solo acepta PNG (apple-touch-icon) ---
+const PNG = [
+  ['icon-192.png', 'isotipo.svg', 192],
+  ['icon-512.png', 'isotipo.svg', 512],
+  ['icon-maskable-192.png', 'isotipo-maskable.svg', 192],
+  ['icon-maskable-512.png', 'isotipo-maskable.svg', 512],
+  // iOS redondea las esquinas por su cuenta: usa la versión a sangre, sin transparencia
+  ['apple-touch-icon.png', 'isotipo-maskable.svg', 180],
+];
+for (const [name, from, size] of PNG) {
+  const png = new Resvg(files[from], { fitTo: { mode: 'width', value: size } }).render().asPng();
+  fs.writeFileSync(path.join(out, name), png);
+}
+
+console.log([...Object.keys(files), ...PNG.map(([name]) => name)].join('\n'));

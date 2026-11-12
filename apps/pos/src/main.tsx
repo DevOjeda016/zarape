@@ -1,3 +1,4 @@
+import { PwaNotices } from '@zarape/ui/components/pwa-notices';
 import { MotionConfig } from 'motion/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -10,6 +11,7 @@ createRoot(document.getElementById('root')!).render(
     {/* Si el sistema pide menos movimiento, Motion quita desplazamientos y deja fundidos */}
     <MotionConfig reducedMotion="user">
       <App />
+      <PwaNotices />
     </MotionConfig>
   </StrictMode>,
 );

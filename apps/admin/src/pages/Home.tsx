@@ -1,10 +1,10 @@
 import { ArrowRightIcon } from '@phosphor-icons/react';
+import { greeting } from '@zarape/shared';
 import { Card, CardDescription, CardHeader, CardTitle } from '@zarape/ui/components/card';
 import { motion } from 'motion/react';
 import { Link } from 'react-router';
 import { useAuth } from '@/auth/session';
 import { CATALOG_MENU, SUPPORT_MENU } from '@/components/menu';
-import { greeting } from '@/lib/format';
 
 /** RDF0101: menú de gestión de catálogos. */
 export function Home() {
