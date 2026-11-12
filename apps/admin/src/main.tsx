@@ -1,3 +1,4 @@
+import { PwaNotices } from '@zarape/ui/components/pwa-notices';
 import { Toaster } from '@zarape/ui/components/sonner';
 import { TooltipProvider } from '@zarape/ui/components/tooltip';
 import { MotionConfig } from 'motion/react';
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
           <TooltipProvider delayDuration={300}>
             <App />
             <Toaster position="top-center" richColors={false} closeButton />
+            <PwaNotices />
           </TooltipProvider>
         </SessionProvider>
       </BrowserRouter>

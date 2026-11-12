@@ -20,6 +20,7 @@
     "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "opentype.js": "^2.0.0",
     "oxlint": "^1.92.0"
   }
