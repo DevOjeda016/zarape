@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-11 | [001-login-loteria-pwa](2026-11-11-001-login-loteria-pwa.md) | Login de marca con cartas y zarape, componentes de Lotería en `packages/ui`, saludo por horario e íconos PNG de la PWA. |
 | 2026-11-10 | [010-ruta-health](2026-11-10-010-ruta-health.md) | `CLAUDE.md`: la salud de la API está en `/api/health` (ya no `/api/salud`). |
 | 2026-11-10 | [009-gestion-con-loteria](2026-11-10-009-gestion-con-loteria.md) | Pantallas de Gestión pasadas a los tokens de Lotería (login sobre la mesa, menú activo en maíz, estados y combos). |
 | 2026-11-10 | [008-identidad-loteria](2026-11-10-008-identidad-loteria.md) | Identidad nueva "Lotería": carta número 1 con jarrito y zarape, temas papel y mesa, Ultra + Libre Franklin. |
