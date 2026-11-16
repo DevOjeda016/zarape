@@ -192,7 +192,8 @@ API y base de datos (`apps/api`):
 - Sin PostgreSQL instalado: `pnpm --filter @zarape/api exec prisma dev` levanta una base local y muestra su URL.
 - `pnpm --filter @zarape/api db:seed`: datos de prueba (menú y combos del plan de mercadeo, sucursales, empleados `admin` y `cocina`; contraseñas en `SEED_ADMIN_PASSWORD` / `SEED_KITCHEN_PASSWORD` o se imprimen una vez).
 - Auth: toda ruta de la API pide JWT salvo las marcadas con `@Public()`; `@Roles('ADMIN')` limita por rol (`apps/api/src/auth/decorators.ts`). En producción `JWT_SECRET` es obligatorio.
-- Pruebas e2e: corren con `TEST_DATABASE_URL` (si no, se saltan); crean y borran registros `e2e-`. `DATABASE_URL` acepta `?schema=` (app, seed y migraciones usan el mismo esquema).
+- Pruebas e2e: corren con `TEST_DATABASE_URL` (si no, se saltan); crean y borran registros `e2e-` (Módulo I) y `e2eo-` (Módulo II), un archivo a la vez. `DATABASE_URL` acepta `?schema=` (app, seed y migraciones usan el mismo esquema).
+- Comandas y pagos: rutas y eventos del socket en `docs/arquitectura.md`. Tarjetas de prueba en `TEST_CARDS` (`packages/shared`).
 - En desarrollo, el admin manda `/api` y `/photos` a la API por el proxy de Vite.
 
 Componentes de shadcn: `pnpm --filter @zarape/ui exec shadcn add <componente>` (quedan en `packages/ui/src/components`). Desde una app, el CLI agrega dependencias a esa app; mejor desde `packages/ui`.

@@ -11,6 +11,7 @@ import { EmployeesModule } from './employees/employees.module.js';
 import { FilesModule } from './files/files.module.js';
 import { FoodsModule } from './foods/foods.module.js';
 import { HealthController } from './health.controller.js';
+import { MenuModule } from './menu/menu.module.js';
 import { OrdersModule } from './orders/orders.module.js';
 import { PaymentsModule } from './payments/payments.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
@@ -27,6 +28,7 @@ import { RealtimeModule } from './realtime/realtime.module.js';
     FoodsModule,
     DrinksModule,
     CombosModule,
+    MenuModule,
     CustomersModule,
     OrdersModule,
     PaymentsModule,
