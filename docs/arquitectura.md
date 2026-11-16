@@ -52,6 +52,7 @@ Código, rutas REST, base de datos y git en inglés (glosario en `docs/modelo-de
 | `categories` | Categorías de alimentos y bebidas | RF04, RF05 |
 | `foods`, `drinks` | Alimentos y bebidas: CRUD y búsqueda | RF04, RF05 |
 | `combos` | CRUD con componentes de alimentos y bebidas | RF06 |
+| `menu` | Menú y sucursales activas, sin sesión (`GET /api/menu`, `GET /api/menu/branches`) | RF07, RF08, RF19 |
 | `customers` | Clientes: registro y perfil del drive thru, baja por estatus | RF17 |
 | `orders` | Comandas: crear al pagar, cambio de estatus, búsqueda, detalle, QR | RF09–RF11, RF15, RF19, RF20 |
 | `payments` | Pagos: simulador de pago en línea y búsqueda de pagos | RF12, RF13 |
@@ -94,12 +95,12 @@ sequenceDiagram
     A->>A: simulador de pago
     A->>DB: pago APPROVED, comanda PAID, turno 042
     A-->>K: ticket + turno + QR
-    A--)C: order:new (sala branch:kitchen)
-    A--)T: ticket:preparing 042
+    A--)C: order:changed PAID (sala branch:kitchen)
+    A--)T: order:changed PAID (sala branch:tickets)
     C->>A: PATCH /orders/:id/status READY
     A->>DB: guarda hora de lista
-    A--)T: ticket:ready 042 (sonido + aviso)
-    A--)K: order:status READY (sala order:qrToken)
+    A--)T: order:changed READY (sonido + aviso)
+    A--)K: order:changed READY (sala order:qrToken)
     K->>A: lectura de QR en ventanilla, ENTREGADA
 ```
 
@@ -108,6 +109,23 @@ sequenceDiagram
 - Salas: `branch:{id}:kitchen`, `branch:{id}:tickets`, `order:{qrToken}`.
 - La sala de cocina exige el JWT de un empleado en el handshake. Turnos y `order:{qrToken}` son solo de lectura.
 - El socket solo **avisa**: la fuente de verdad es REST. Al reconectar, cada pantalla vuelve a pedir su lista por REST.
+- El cliente entra a una sala con `join` (`{ room: 'kitchen' | 'tickets' | 'order', branchId?, qrToken? }`) y recibe `{ ok }`. Para cocina manda su JWT en `auth.token` del handshake.
+- Un solo evento, `order:changed` (`{ id, ticketNumber, status }`), llega a las tres salas de la comanda cuando se paga o cambia de estatus.
+
+### Rutas de comandas y pagos
+
+| Ruta | Quién | Qué hace |
+|---|---|---|
+| `POST /api/orders` | Público (kiosko) | Crea la comanda con `{ branchId, items: [{ type, productId, quantity }], card }`, recalcula con la BD y cobra en el simulador. Responde `{ order, payment }`. |
+| `POST /api/orders/by-token/:qrToken/payments` | Público | Reintenta el pago de una comanda `PENDING`. |
+| `GET /api/orders/by-token/:qrToken` | Público | Comanda y detalle por el token del QR. |
+| `GET /api/orders/tickets?branchId=` | Público | Turnos de hoy: `{ preparing, ready }` (RF14). |
+| `GET /api/orders` | `ADMIN`, `KITCHEN` | Búsqueda por `from`/`to` (AAAA-MM-DD), `minTotal`/`maxTotal`, `status` (varios con coma), `branchId`, `channel` (RDF1002). |
+| `GET /api/orders/:id` | `ADMIN`, `KITCHEN` | Detalle (RDF1102). |
+| `PATCH /api/orders/:id/status` | `ADMIN`, `KITCHEN` | `IN_KITCHEN`, `READY`, `DELIVERED` o `CANCELLED`, respetando el flujo. `PAID` solo lo pone el pago. |
+| `GET /api/payments` | `ADMIN` | Búsqueda por `from`/`to`, `minAmount`/`maxAmount`, `status` (RDF130102). |
+
+Los días de las búsquedas y el turno diario usan la hora local de León (UTC−6).
 
 ## Pagos y datos de tarjeta
 
@@ -115,7 +133,8 @@ El pago es un **simulador**. RF13 y RF17 piden registrar número de tarjeta, ven
 
 - El número completo y el CVV se **validan** al capturarlos (formato, Luhn, vencimiento) pero **no se guardan**.
 - Se guardan: titular, marca, **últimos 4 dígitos**, mes y año de vencimiento, monto, fecha, estatus y una referencia simulada.
-- Tarjetas de prueba: los números públicos de prueba de las pasarelas (p. ej. `4242 4242 4242 4242` aprueba; una lista fija de números rechaza).
+- Tarjetas de prueba (`TEST_CARDS` en `packages/shared`): `4242 4242 4242 4242` aprueba; `4000 0000 0000 0002` (rechazada por el banco) y `4000 0000 0000 9995` (sin fondos) rechazan. Cualquier otro número que pase Luhn se aprueba.
+- La validación (`cardError`) vive en `packages/shared`: el front avisa al capturar y la API vuelve a validar.
 
 ## Despliegue (propuesta)
 
