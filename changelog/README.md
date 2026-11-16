@@ -47,6 +47,7 @@ Ejemplo: `2026-11-08-001-inicializacion.md`
 
 | Fecha | Entrada | Resumen |
 |---|---|---|
+| 2026-11-16 | [002-kiosko](2026-11-16-002-kiosko.md) | Kiosko en `apps/pos`: menú en cartas, comanda tipo ticket, pago simulado, turno con QR y menú disponible sin conexión. |
 | 2026-11-16 | [001-api-modulo-en-sitio](2026-11-16-001-api-modulo-en-sitio.md) | API del Módulo II: menú público, comanda con pago simulado y turno, cola de cocina, pantalla de turnos, búsqueda de comandas y pagos, avisos por socket. |
 | 2026-11-11 | [001-login-loteria-pwa](2026-11-11-001-login-loteria-pwa.md) | Login de marca con cartas y zarape, componentes de Lotería en `packages/ui`, saludo por horario e íconos PNG de la PWA. |
 | 2026-11-10 | [010-ruta-health](2026-11-10-010-ruta-health.md) | `CLAUDE.md`: la salud de la API está en `/api/health` (ya no `/api/salud`). |
