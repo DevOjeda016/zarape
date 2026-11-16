@@ -21,7 +21,8 @@ export default defineConfig({
     // Usa el código fuente de @zarape/shared sin tener que compilarlo antes
     conditions: ['@zarape/source', ...defaultClientConditions],
   },
-  server: { port: 5173, strictPort: true, proxy: apiProxy },
+  // allowedHosts: permite abrir el dev server por el túnel de VS Code (*.devtunnels.ms)
+  server: { port: 5173, strictPort: true, proxy: apiProxy, allowedHosts: ['.devtunnels.ms'] },
   preview: { port: 4173, strictPort: true, proxy: apiProxy },
   plugins: [
     react(),
